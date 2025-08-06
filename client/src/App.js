@@ -32,6 +32,8 @@ import ProfileEditPage from "./pages/ProfileEditPage";
 import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 import ResetPasswordPage from "./pages/ResetPasswordPage";
 
+// Triggering new Vercel deployment.
+
 function App() {
   return (
     <div className="flex flex-col min-h-screen">
