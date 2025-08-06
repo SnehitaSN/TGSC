@@ -1,0 +1,24 @@
+# Node.js
+node_modules/
+npm-debug.log
+.env
+.env.local
+.DS_Store # macOS specific
+
+# Build artifacts
+build/
+dist/
+.parcel-cache/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Logs
+logs/
+*.log
+
+# Thumbnails
+.thumbnails/
+#client
+.env
