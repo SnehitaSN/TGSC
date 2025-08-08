@@ -14,7 +14,30 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors()); // Enable CORS for all routes
+// app.use(cors()); // Enable CORS for all routes
+// app.use(express.json()); // Enable JSON body parsing
+
+// Configure CORS to only allow requests from your Vercel frontend URL
+// The CLIENT_URL should be set as an environment variable on Render
+const allowedOrigins = [
+  process.env.CLIENT_URL,
+  'http://localhost:3000' // Allow for local development
+];
+
+const corsOptions = {
+  origin: (origin, callback) => {
+    // allow requests with no origin (like mobile apps or curl requests)
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true,
+};
+
+// Middleware
+app.use(cors(corsOptions)); // ⭐ UPDATED: Use the configured corsOptions
 app.use(express.json()); // Enable JSON body parsing
 
 // ⭐ Configure Express to serve static files from the 'public' directory
