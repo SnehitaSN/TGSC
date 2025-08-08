@@ -13,6 +13,9 @@ function OrderDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   useEffect(() => {
     const fetchOrderDetails = async () => {
       setLoading(true);
@@ -26,7 +29,7 @@ function OrderDetailPage() {
 
       try {
         // ⭐ Call your backend API to fetch order details
-        const response = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
+        const response = await fetch(`${backendUrl}/api/orders/${orderId}`, {
           headers: {
             'Authorization': `Bearer ${authToken}` // Send JWT token
           }

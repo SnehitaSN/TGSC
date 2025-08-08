@@ -12,6 +12,10 @@ function CartPage() {
   const [loadingCart, setLoadingCart] = useState(true);
   const [cartError, setCartError] = useState(null);
 
+
+   // ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   // Function to handle authentication errors (e.g., expired/invalid token)
   const handleAuthError = (errorMessage) => {
     localStorage.removeItem('authToken'); // Clear the expired/invalid token
@@ -33,7 +37,8 @@ function CartPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/cart", {
+      // ⭐ UPDATED: Use the dynamic backend URL
+      const response = await fetch(`${backendUrl}/api/cart`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'application/json',
@@ -98,7 +103,8 @@ function CartPage() {
     }
 
     try {
-        const response = await fetch("http://localhost:5000/api/cart/update-item", {
+         // ⭐ UPDATED: Use the dynamic backend URL
+        const response = await fetch(`${backendUrl}/api/cart/update-item`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -141,7 +147,8 @@ function CartPage() {
     }
 
     try {
-        const response = await fetch(`http://localhost:5000/api/cart/remove-item/${productId}`, {
+      // ⭐ UPDATED: Use the dynamic backend URL
+        const response = await fetch(`${backendUrl}/api/cart/remove-item/${productId}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${authToken}`,

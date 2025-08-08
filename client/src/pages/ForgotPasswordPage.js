@@ -12,6 +12,9 @@ function ForgotPasswordPage() {
   const [error, setError] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+// ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setMessage('');
@@ -25,7 +28,8 @@ function ForgotPasswordPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/forgot-password', {
+     // ⭐ UPDATED: Use the dynamic backend URL
+      const response = await fetch(`${backendUrl}/api/forgot-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

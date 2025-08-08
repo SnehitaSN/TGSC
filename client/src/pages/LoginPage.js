@@ -13,6 +13,11 @@ function LoginPage() {
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // New state for submission status
 
+
+
+   // ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   const handleLogin = async (e) => { // Make function async
     e.preventDefault();
     setLoginError('');
@@ -20,7 +25,7 @@ function LoginPage() {
     setIsSubmitting(true); // Set submitting to true
 
     try {
-      const response = await fetch('http://localhost:5000/api/login', {
+      const response = await fetch(`${backendUrl}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -10,10 +10,13 @@ export default function SingleArticlePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/blog_posts/${id}`); // Fetch single article
+        const response = await fetch(`${backendUrl}/api/blog_posts/${id}`); // Fetch single article
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

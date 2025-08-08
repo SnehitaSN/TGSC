@@ -309,6 +309,11 @@ export default function ProductsPage() {
   const [addingToCart, setAddingToCart] = useState(null); // State to track which product is being added
   const [cartMessage, setCartMessage] = useState({ show: false, type: '', message: '' }); // State for success/error messages
 
+
+
+    // ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   const navigate = useNavigate();
 
   // Fetch products from the backend when the component mounts
@@ -318,7 +323,7 @@ export default function ProductsPage() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch('http://localhost:5000/api/products_s'); // Your backend API URL
+        const response = await fetch(`${backendUrl}/api/products_s`); // Your backend API URL
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
         }
@@ -359,7 +364,7 @@ export default function ProductsPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/cart/add", {
+      const response = await fetch(`${backendUrl}/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

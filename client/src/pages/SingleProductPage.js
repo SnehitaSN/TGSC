@@ -12,6 +12,10 @@ export default function SingleProductPage() {
   const [addingToCart, setAddingToCart] = useState(false); // New state for add to cart loading
   const [cartMessage, setCartMessage] = useState({ show: false, type: '', message: '' }); // New state for cart messages
 
+
+    // ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -20,7 +24,7 @@ export default function SingleProductPage() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`http://localhost:5000/api/products_s/${id}`);
+        const response = await fetch(`${backendUrl}/api/products_s/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
         }
@@ -61,7 +65,7 @@ export default function SingleProductPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/cart/add", {
+      const response = await fetch(`${backendUrl}/api/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

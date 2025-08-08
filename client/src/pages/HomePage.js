@@ -33,6 +33,10 @@ import { motion } from "framer-motion";
 // No import statement needed for images placed in the public directory
 // import heroImage from '../assets/images/ChatGPT Image Jun 26, 2025, 11_48_48 AM.png';
 
+
+// ⭐ Define the dynamic backend URL
+const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
 // Mock data for the blog categories and posts
 const blogCategories = [
   {
@@ -187,7 +191,7 @@ export default function LandingPage() {
       setLoadingProducts(true);
       setProductsError(null);
       try {
-        const response = await fetch("http://localhost:5000/api/products_s");
+        const response = await fetch(`${backendUrl}/api/products_s`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -207,7 +211,7 @@ export default function LandingPage() {
     // Fetch blog posts (products fetching removed as per request)
     const fetchBlogPosts = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/blog_posts"); // Assuming your backend runs on port 5000
+        const response = await fetch(`${backendUrl}/api/blog_posts`); // Assuming your backend runs on port 5000
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -262,7 +266,7 @@ export default function LandingPage() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/cart/add", {
+      const response = await fetch(`${backendUrl}/api/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -323,7 +327,7 @@ export default function LandingPage() {
 
     try {
       const response = await fetch(
-        "http://localhost:5000/api/subscribe-discount",
+        `${backendUrl}/api/subscribe-discount`,
         {
           method: "POST",
           headers: {

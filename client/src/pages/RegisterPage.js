@@ -16,6 +16,9 @@ function RegisterPage() {
   const [registrationSuccess, setRegistrationSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   const handleRegister = async (e) => {
     e.preventDefault();
     setRegistrationError('');
@@ -36,7 +39,7 @@ function RegisterPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/register', { // Ensure this matches your backend URL
+      const response = await fetch(`${backendUrl}/api/register`, { // Ensure this matches your backend URL
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

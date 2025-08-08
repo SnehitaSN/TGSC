@@ -20,6 +20,9 @@ function ProfileEditPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+    // ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       setLoading(true);
@@ -33,7 +36,7 @@ function ProfileEditPage() {
 
       try {
         // ⭐ Make authenticated API call to fetch user profile
-        const response = await fetch("http://localhost:5000/api/user/profile", {
+        const response = await fetch(`${backendUrl}/api/user/profile`, {
           headers: {
             Authorization: `Bearer ${authToken}`, // ⭐ Send JWT in Authorization header
           },
@@ -85,7 +88,7 @@ function ProfileEditPage() {
     try {
       // ⭐ Make authenticated API call to update user profile
       const response = await fetch(
-        "http://localhost:5000/api/user/profile/update",
+        `${backendUrl}/api/user/profile/update`,
         {
           method: "PUT", // Or PATCH
           headers: {

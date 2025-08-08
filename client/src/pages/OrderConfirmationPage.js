@@ -8,6 +8,9 @@ function OrderConfirmationPage() {
   const location = useLocation();
   const [orderDetails, setOrderDetails] = useState(null);
 
+    // ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   useEffect(() => {
     // Retrieve order details from location state
     if (location.state && location.state.orderDetails) {

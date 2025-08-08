@@ -18,6 +18,9 @@ function ResetPasswordPage() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [token, setToken] = useState(null);
 
+    // ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
   useEffect(() => {
     // Extract token from URL query parameters (e.g., /reset-password?token=YOUR_TOKEN)
     const resetToken = searchParams.get('token');
@@ -53,7 +56,7 @@ function ResetPasswordPage() {
     }
 
     try {
-      const response = await fetch('http://localhost:5000/api/reset-password', {
+      const response = await fetch(`${backendUrl}/api/reset-password`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

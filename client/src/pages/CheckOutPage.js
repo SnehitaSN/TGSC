@@ -54,6 +54,10 @@ function CheckoutPage() {
   const [loadingOrderDetails, setLoadingOrderDetails] = useState(true);
   const [orderDetailsError, setOrderDetailsError] = useState(null);
 
+// ⭐ ADDED: Define the backend URL from an environment variable
+  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+
+
   // Load Razorpay script dynamically
   useEffect(() => {
     const script = document.createElement("script");
@@ -80,13 +84,13 @@ function CheckoutPage() {
       }
 
       try {
-        const response = await fetch("http://localhost:5000/api/cart", {
+        // ⭐ UPDATED: Use the dynamic backend URL
+        const response = await fetch(`${backendUrl}/api/cart`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
             'Content-Type': 'application/json',
           },
         });
-
         if (!response.ok) {
           const errorData = await response.json();
           throw new Error(errorData.message || 'Failed to fetch cart items.');
@@ -133,7 +137,8 @@ function CheckoutPage() {
       }
 
       try {
-        const response = await fetch(`http://localhost:5000/api/orders/${orderId}`, {
+        // ⭐ UPDATED: Use the dynamic backend URL
+        const response = await fetch(`${backendUrl}/api/orders/${orderId}`, {
           headers: {
             Authorization: `Bearer ${authToken}`
           }
@@ -169,7 +174,8 @@ function CheckoutPage() {
   const createRazorpayOrderOnBackend = async (amount) => {
     try {
       const authToken = localStorage.getItem('authToken');
-      const response = await fetch("http://localhost:5000/api/create-razorpay-order", {
+      // ⭐ UPDATED: Use the dynamic backend URL
+      const response = await fetch(`${backendUrl}/api/create-razorpay-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -194,7 +200,8 @@ function CheckoutPage() {
   const verifyRazorpayPaymentOnBackend = async (paymentResponse) => {
     try {
       const authToken = localStorage.getItem('authToken');
-      const response = await fetch("http://localhost:5000/api/verify-razorpay-payment", {
+    // ⭐ UPDATED: Use the dynamic backend URL
+      const response = await fetch(`${backendUrl}/api/verify-razorpay-payment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -202,7 +209,6 @@ function CheckoutPage() {
         },
         body: JSON.stringify(paymentResponse),
       });
-
       if (!response.ok) {
         const errorData = await response.json();
         throw new Error(errorData.message || 'Payment verification failed on backend.');
