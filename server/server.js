@@ -13,19 +13,29 @@ const path = require("path"); // ⭐ ADDED: Import the 'path' module
 const app = express();
 const port = process.env.PORT || 5000;
 
+// ⭐ FIX: Configure CORS to accept requests from your Vercel frontend.
+// The CORS_ORIGIN environment variable should be a comma-separated list
+// of allowed domains, e.g., "https://tgsc-hpp5.vercel.app,http://localhost:3000"
+const allowedOrigins = process.env.CORS_ORIGIN
+  ? process.env.CORS_ORIGIN.split(",")
+  : [];
 
-// ⭐ ADDED: Debugging log to confirm the environment variable is being read
-console.log("CLIENT_URL  from environment:", process.env.CLIENT_URL );
+// ⭐ Use the new cors configuration
+app.use(cors({
+  origin: (origin, callback) => {
+    // Allow requests with no origin (like mobile apps or curl requests)
+    if (!origin) return callback(null, true);
+    // Allow requests from the defined origins
+    if (allowedOrigins.indexOf(origin) === -1) {
+      const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  },
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  credentials: true,
+}));
 
-// ⭐ UPDATED: CORS Configuration to handle the frontend URL
-// The origin should be your Vercel frontend URL.
-// IMPORTANT: Ensure the VERCEL_FRONTEND_URL environment variable is set on Render.
-const corsOptions = {
-  origin: process.env. CLIENT_URL || 'http://localhost:3000',
-  optionsSuccessStatus: 200 // For legacy browser support
-};
-
-app.use(cors(corsOptions));
 
 // ⭐ UPDATED: PostgreSQL Connection Pool
 // Use a single DATABASE_URL environment variable for robust connections on Render.
@@ -34,25 +44,12 @@ app.use(cors(corsOptions));
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   ssl: {
-    rejectUnauthorized: false
-  }
+    rejectUnauthorized: false,
+  },
 });
 
 // Middleware
-// app.use(cors()); // Enable CORS for all routes
-// app.use(express.json()); // Enable JSON body parsing
-
-// Configure CORS to only allow requests from your Vercel frontend URL
-// The CLIENT_URL should be set as an environment variable on Render
-// const allowedOrigins = [
-//   process.env.CLIENT_URL,
-//   'http://localhost:3000' // Allow for local development
-// ];
-
-
-
-// Middleware
-app.use(cors(corsOptions)); // ⭐ UPDATED: Use the configured corsOptions
+//app.use(cors(corsOptions)); // ⭐ UPDATED: Use the configured corsOptions
 app.use(express.json()); // Enable JSON body parsing
 
 // ⭐ Configure Express to serve static files from the 'public' directory
@@ -1394,8 +1391,7 @@ app.post(
 //   console.log(`Server running on port ${port}`);
 // });
 
-
 // Your app.listen() call now specifies the host '0.0.0.0'
-app.listen(port, '0.0.0.0', () => {
+app.listen(port, "0.0.0.0", () => {
   console.log(`Server is running on port ${port}`);
 });
