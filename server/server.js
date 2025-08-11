@@ -13,11 +13,15 @@ const path = require("path"); // ⭐ ADDED: Import the 'path' module
 const app = express();
 const port = process.env.PORT || 5000;
 
+
+// ⭐ ADDED: Debugging log to confirm the environment variable is being read
+console.log("CLIENT_URL  from environment:", process.env.CLIENT_URL );
+
 // ⭐ UPDATED: CORS Configuration to handle the frontend URL
 // The origin should be your Vercel frontend URL.
 // IMPORTANT: Ensure the VERCEL_FRONTEND_URL environment variable is set on Render.
 const corsOptions = {
-  origin: process.env.VERCEL_FRONTEND_URL || 'http://localhost:3000',
+  origin: process.env. CLIENT_URL || 'http://localhost:3000',
   optionsSuccessStatus: 200 // For legacy browser support
 };
 
