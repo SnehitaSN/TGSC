@@ -49,14 +49,29 @@ app.use(cors({
 // });
 
 
-// PostgreSQL Connection Pool
+// // PostgreSQL Connection Pool
+// const pool = new Pool({
+//   user: process.env.DB_USER,
+//   host: process.env.DB_HOST,
+//   database: process.env.DB_DATABASE,
+//   password: process.env.DB_PASSWORD,
+//   port: process.env.DB_PORT,
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
+
+
+
+// PostgreSQL Connection Pool Configuration
+// These values MUST be set as environment variables on the Render dashboard.
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
   database: process.env.DB_DATABASE,
   password: process.env.DB_PASSWORD,
   port: process.env.DB_PORT,
-  // ⭐ FIX: Add SSL configuration for Render PostgreSQL database
+  // This SSL configuration is essential for connecting to Render's hosted PostgreSQL.
   ssl: {
     rejectUnauthorized: false,
   },
