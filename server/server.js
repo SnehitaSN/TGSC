@@ -13,28 +13,39 @@ const path = require("path"); // ⭐ ADDED: Import the 'path' module
 const app = express();
 const port = process.env.PORT || 5000;
 
+// ⭐ UPDATED: CORS Configuration to handle the frontend URL
+// The origin should be your Vercel frontend URL.
+// IMPORTANT: Ensure the VERCEL_FRONTEND_URL environment variable is set on Render.
+const corsOptions = {
+  origin: process.env.VERCEL_FRONTEND_URL || 'http://localhost:3000',
+  optionsSuccessStatus: 200 // For legacy browser support
+};
+
+app.use(cors(corsOptions));
+
+// ⭐ UPDATED: PostgreSQL Connection Pool
+// Use a single DATABASE_URL environment variable for robust connections on Render.
+// IMPORTANT: The DATABASE_URL environment variable MUST be set on Render
+// to the "Internal Connection String" from your PostgreSQL dashboard.
+const pool = new Pool({
+  connectionString: process.env.DATABASE_URL,
+  ssl: {
+    rejectUnauthorized: false
+  }
+});
+
 // Middleware
 // app.use(cors()); // Enable CORS for all routes
 // app.use(express.json()); // Enable JSON body parsing
 
 // Configure CORS to only allow requests from your Vercel frontend URL
 // The CLIENT_URL should be set as an environment variable on Render
-const allowedOrigins = [
-  process.env.CLIENT_URL,
-  'http://localhost:3000' // Allow for local development
-];
+// const allowedOrigins = [
+//   process.env.CLIENT_URL,
+//   'http://localhost:3000' // Allow for local development
+// ];
 
-const corsOptions = {
-  origin: (origin, callback) => {
-    // allow requests with no origin (like mobile apps or curl requests)
-    if (!origin || allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true,
-};
+
 
 // Middleware
 app.use(cors(corsOptions)); // ⭐ UPDATED: Use the configured corsOptions
@@ -43,14 +54,14 @@ app.use(express.json()); // Enable JSON body parsing
 // ⭐ Configure Express to serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, "public")));
 
-// PostgreSQL Connection Pool
-const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-});
+// PostgreSQL Connection Pool for local db
+// const pool = new Pool({
+//   user: process.env.DB_USER,
+//   host: process.env.DB_HOST,
+//   database: process.env.DB_DATABASE,
+//   password: process.env.DB_PASSWORD,
+//   port: process.env.DB_PORT,
+// });
 
 // Nodemailer Transporter Setup
 // IMPORTANT: Replace with your actual email service credentials
