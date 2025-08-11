@@ -13,6 +13,12 @@ import {
   XCircle, // Added for error messages
 } from "lucide-react";
 
+// ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+// // ⭐ FIX: Changed process.env.VITE_API_URL to import.meta.env.VITE_API_URL
+// const API_URL = import.meta.env.REACT_APP_API_URL; 
+
 // Updated Mock data for the blog categories - now includes status for articles
 const blogCategories = [
   {
@@ -78,9 +84,7 @@ function BlogPage() {
         setError(null);
         // const response = await fetch('http://localhost:5000/api/blog_posts');
 
-        const backendUrl =
-          process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
-        const response = await fetch(`${backendUrl}/api/blog_posts`);
+        const response = await fetch(`${API_URL}/api/blog_posts`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }

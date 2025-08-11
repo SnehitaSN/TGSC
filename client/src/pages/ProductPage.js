@@ -291,9 +291,25 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "../components/ui/Button";
-import { Card, CardContent, CardHeader, CardTitle } from "../components/ui/Card"; // Added CardHeader, CardTitle
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/Card"; // Added CardHeader, CardTitle
 import { Badge } from "../components/ui/Badge";
-import { ShoppingCart, Package, Heart, CheckCircle, ArrowRight, Clock, Sparkles, Tag, Loader2, XCircle } from "lucide-react"; // Added Loader2, XCircle
+import {
+  ShoppingCart,
+  Package,
+  Heart,
+  CheckCircle,
+  ArrowRight,
+  Clock,
+  Sparkles,
+  Tag,
+  Loader2,
+  XCircle,
+} from "lucide-react"; // Added Loader2, XCircle
 
 // --- IMPORT YOUR LOCAL IMAGES HERE ---
 // Ensure these paths are correct relative to this file
@@ -301,18 +317,19 @@ import { ShoppingCart, Package, Heart, CheckCircle, ArrowRight, Clock, Sparkles,
 // import OrganicGarden from '../assets/product-images/OrganicGarden.JPG';
 // import NPK from'../assets/product-images/NPK.jpg';
 
-
 export default function ProductsPage() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [addingToCart, setAddingToCart] = useState(null); // State to track which product is being added
-  const [cartMessage, setCartMessage] = useState({ show: false, type: '', message: '' }); // State for success/error messages
+  const [cartMessage, setCartMessage] = useState({
+    show: false,
+    type: "",
+    message: "",
+  }); // State for success/error messages
 
-
-
-    // ⭐ ADDED: Define the backend URL from an environment variable
-  // const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   const navigate = useNavigate();
 
@@ -323,15 +340,19 @@ export default function ProductsPage() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`${{import:meta.env.REACT_API_URL}}/api/products_s`); // Your backend API URL
+        const response = await fetch(`${API_URL}/api/products_s`); // Your backend API URL
         if (!response.ok) {
-          throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
+          throw new Error(
+            `HTTP error! Status: ${response.status} - ${response.statusText}`
+          );
         }
         const data = await response.json();
         setProducts(data);
       } catch (err) {
         console.error("Failed to fetch products:", err);
-        setError(`Failed to load products: ${err.message}. Please ensure the backend server is running and accessible.`);
+        setError(
+          `Failed to load products: ${err.message}. Please ensure the backend server is running and accessible.`
+        );
       } finally {
         setLoading(false);
       }
@@ -353,51 +374,69 @@ export default function ProductsPage() {
   // ⭐ UPDATED: handleAddToCart to use backend API
   const handleAddToCart = async (productId, quantity = 1) => {
     setAddingToCart(productId); // Set loading state for this specific product
-    setCartMessage({ show: false, type: '', message: '' }); // Clear previous messages
+    setCartMessage({ show: false, type: "", message: "" }); // Clear previous messages
 
-    const authToken = localStorage.getItem('authToken');
+    const authToken = localStorage.getItem("authToken");
     if (!authToken) {
-      setCartMessage({ show: true, type: 'error', message: 'You must be logged in to add items to cart.' });
+      setCartMessage({
+        show: true,
+        type: "error",
+        message: "You must be logged in to add items to cart.",
+      });
       setAddingToCart(null);
-      navigate('/login'); // Redirect to login if not authenticated
+      navigate("/login"); // Redirect to login if not authenticated
       return;
     }
 
     try {
-      const response = await fetch(`${{import:meta.env.REACT_API_URL}}/cart/add`, {
+      const response = await fetch(`${API_URL}/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "Authorization": `Bearer ${authToken}`,
+          Authorization: `Bearer ${authToken}`,
         },
         body: JSON.stringify({ productId, quantity }),
       });
 
       if (response.status === 401 || response.status === 403) {
-        localStorage.removeItem('authToken'); // Clear expired/invalid token
-        setCartMessage({ show: true, type: 'error', message: 'Your session has expired. Please log in again.' });
-        navigate('/login');
+        localStorage.removeItem("authToken"); // Clear expired/invalid token
+        setCartMessage({
+          show: true,
+          type: "error",
+          message: "Your session has expired. Please log in again.",
+        });
+        navigate("/login");
         return;
       }
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to add item to cart.');
+        throw new Error(errorData.message || "Failed to add item to cart.");
       }
 
       const data = await response.json();
-      setCartMessage({ show: true, type: 'success', message: data.message || 'Item added to cart!' });
+      setCartMessage({
+        show: true,
+        type: "success",
+        message: data.message || "Item added to cart!",
+      });
 
       // ⭐ Dispatch a custom event to notify Header and CartPage to update their counts/data
-      window.dispatchEvent(new Event('cartUpdated'));
-
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (err) {
       console.error("Error adding to cart:", err);
-      setCartMessage({ show: true, type: 'error', message: err.message || 'Error adding item to cart.' });
+      setCartMessage({
+        show: true,
+        type: "error",
+        message: err.message || "Error adding item to cart.",
+      });
     } finally {
       setAddingToCart(null); // Reset loading state
       // Hide message after 3 seconds
-      setTimeout(() => setCartMessage({ show: false, type: '', message: '' }), 3000);
+      setTimeout(
+        () => setCartMessage({ show: false, type: "", message: "" }),
+        3000
+      );
     }
   };
 
@@ -406,8 +445,13 @@ export default function ProductsPage() {
     // For now, it's navigating with query params, which is less ideal for a real e-commerce flow.
     // A better approach would be: add to cart API call, then navigate to checkout.
     console.log(`Initiating direct purchase for product ${product.id}!`);
-    const priceToBuy = calculateDiscountedPrice(product.price, product.discount_percentage);
-    navigate(`/checkout?productId=${product.id}&quantity=1&price=${priceToBuy}&originalPrice=${product.price}`);
+    const priceToBuy = calculateDiscountedPrice(
+      product.price,
+      product.discount_percentage
+    );
+    navigate(
+      `/checkout?productId=${product.id}&quantity=1&price=${priceToBuy}&originalPrice=${product.price}`
+    );
   };
 
   if (loading) {
@@ -424,7 +468,10 @@ export default function ProductsPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-50 to-green-100 flex-col p-4">
         <XCircle className="mr-2 h-8 w-8 text-red-600" />
         <p className="text-xl text-red-600 text-center mb-4">{error}</p>
-        <Button onClick={() => window.location.reload()} className="bg-green-600 hover:bg-green-700 text-white mt-4">
+        <Button
+          onClick={() => window.location.reload()}
+          className="bg-green-600 hover:bg-green-700 text-white mt-4"
+        >
           Retry Loading Products
         </Button>
       </div>
@@ -435,8 +482,13 @@ export default function ProductsPage() {
   if (products.length === 0 && !loading && !error) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-green-50 to-green-100">
-        <p className="text-xl text-green-800 mb-4">No products found. Please add products to your database.</p>
-        <p className="text-md text-green-700 text-center">Ensure your backend server is running and your database tables are populated.</p>
+        <p className="text-xl text-green-800 mb-4">
+          No products found. Please add products to your database.
+        </p>
+        <p className="text-md text-green-700 text-center">
+          Ensure your backend server is running and your database tables are
+          populated.
+        </p>
       </div>
     );
   }
@@ -452,15 +504,25 @@ export default function ProductsPage() {
             Nourish Your Garden, Nurture Your Home
           </h1>
           <p className="max-w-3xl mx-auto text-green-800 md:text-xl leading-relaxed mt-6">
-            Discover our carefully crafted organic fertilizers, designed to bring life and vitality to every plant, from flourishing vegetables to serene indoor greens.
+            Discover our carefully crafted organic fertilizers, designed to
+            bring life and vitality to every plant, from flourishing vegetables
+            to serene indoor greens.
           </p>
         </div>
 
         {cartMessage.show && (
-          <div className={`p-3 rounded-md text-sm flex items-center gap-2 mb-6 ${
-            cartMessage.type === 'success' ? 'bg-green-100 text-green-700' : 'bg-red-100 text-red-700'
-          }`}>
-            {cartMessage.type === 'success' ? <CheckCircle className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+          <div
+            className={`p-3 rounded-md text-sm flex items-center gap-2 mb-6 ${
+              cartMessage.type === "success"
+                ? "bg-green-100 text-green-700"
+                : "bg-red-100 text-red-700"
+            }`}
+          >
+            {cartMessage.type === "success" ? (
+              <CheckCircle className="h-5 w-5" />
+            ) : (
+              <XCircle className="h-5 w-5" />
+            )}
             {cartMessage.message}
           </div>
         )}
@@ -468,45 +530,68 @@ export default function ProductsPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
           {products.map((product) => {
             // Ensure properties are safely accessed, defaulting to empty string or 0 if null/undefined
-            const productName = product.name || 'Unnamed Product';
-            const productDescription = product.description || 'No description available.';
-            const productCategory = product.category || 'Uncategorized';
+            const productName = product.name || "Unnamed Product";
+            const productDescription =
+              product.description || "No description available.";
+            const productCategory = product.category || "Uncategorized";
             const productPrice = parseFloat(product.price) || 0;
-            const productDiscountPercentage = parseFloat(product.discount_percentage) || 0;
+            const productDiscountPercentage =
+              parseFloat(product.discount_percentage) || 0;
             const productComingSoon = product.coming_soon === true; // Ensure boolean
             const productInStock = product.in_stock === true; // Ensure boolean
 
-            const discountedPrice = calculateDiscountedPrice(productPrice, productDiscountPercentage);
+            const discountedPrice = calculateDiscountedPrice(
+              productPrice,
+              productDiscountPercentage
+            );
             const hasDiscount = productDiscountPercentage > 0;
-            const discountedAmount = productPrice * (productDiscountPercentage / 100);
+            const discountedAmount =
+              productPrice * (productDiscountPercentage / 100);
 
             return (
-              <Card key={product.id} className="group flex flex-col border-green-200 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-white/70 backdrop-blur-sm overflow-hidden">
+              <Card
+                key={product.id}
+                className="group flex flex-col border-green-200 hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 bg-white/70 backdrop-blur-sm overflow-hidden"
+              >
                 {/* Link to single product detail page */}
-                <Link to={`/products/${product.id}`} className="block relative overflow-hidden">
+                <Link
+                  to={`/products/${product.id}`}
+                  className="block relative overflow-hidden"
+                >
                   <img
-                    src={product.image_url || `https://placehold.co/400x300/cccccc/333333?text=${productName.replace(/\s/g, '+')}`} // ⭐ Changed to product.image_url
+                    src={
+                      product.image_url ||
+                      `https://placehold.co/400x300/cccccc/333333?text=${productName.replace(
+                        /\s/g,
+                        "+"
+                      )}`
+                    } // ⭐ Changed to product.image_url
                     alt={productName}
                     width={400}
                     height={300}
                     className="w-full h-56 object-cover rounded-t-lg transition-transform duration-500 group-hover:scale-105"
-                    onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/400x300/cccccc/333333?text=${productName.replace(/\s/g, '+')}`; }}
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = `https://placehold.co/400x300/cccccc/333333?text=${productName.replace(
+                        /\s/g,
+                        "+"
+                      )}`;
+                    }}
                   />
                   {productComingSoon ? (
                     <Badge className="absolute top-3 right-3 bg-blue-500 text-white py-1 px-3 shadow-md rotate-3 transform origin-top-right">
                       Coming Soon!
                     </Badge>
+                  ) : hasDiscount ? (
+                    <Badge className="absolute top-3 right-3 bg-red-500 text-white py-1 px-3 shadow-md rotate-3 transform origin-top-right flex items-center gap-1">
+                      <Tag className="h-4 w-4" /> {productDiscountPercentage}%
+                      OFF
+                    </Badge>
                   ) : (
-                    hasDiscount ? (
-                      <Badge className="absolute top-3 right-3 bg-red-500 text-white py-1 px-3 shadow-md rotate-3 transform origin-top-right flex items-center gap-1">
-                        <Tag className="h-4 w-4" /> {productDiscountPercentage}% OFF
+                    !productInStock && (
+                      <Badge className="absolute top-3 right-3 bg-gray-500 text-white py-1 px-3 shadow-md rotate-3 transform origin-top-right">
+                        Out of Stock
                       </Badge>
-                    ) : (
-                      !productInStock && (
-                        <Badge className="absolute top-3 right-3 bg-gray-500 text-white py-1 px-3 shadow-md rotate-3 transform origin-top-right">
-                          Out of Stock
-                        </Badge>
-                      )
                     )
                   )}
                 </Link>
@@ -515,11 +600,16 @@ export default function ProductsPage() {
                     {productCategory}
                   </Badge>
                   <h3 className="text-xl font-bold text-green-950 mb-2 line-clamp-2 leading-tight">
-                    <Link to={`/products/${product.id}`} className="hover:text-green-700 transition-colors">
+                    <Link
+                      to={`/products/${product.id}`}
+                      className="hover:text-green-700 transition-colors"
+                    >
                       {productName}
                     </Link>
                   </h3>
-                  <p className="text-green-800 text-sm mb-4 line-clamp-3 leading-relaxed flex-grow">{productDescription}</p>
+                  <p className="text-green-800 text-sm mb-4 line-clamp-3 leading-relaxed flex-grow">
+                    {productDescription}
+                  </p>
 
                   <div className="flex flex-col mb-4 mt-auto">
                     {hasDiscount && (
@@ -533,7 +623,9 @@ export default function ProductsPage() {
                       </div>
                     )}
                     <span className="text-2xl font-bold text-green-800">
-                      {productComingSoon ? "—" : `₹${discountedPrice.toFixed(2)}`}
+                      {productComingSoon
+                        ? "—"
+                        : `₹${discountedPrice.toFixed(2)}`}
                     </span>
                   </div>
 
@@ -547,7 +639,8 @@ export default function ProductsPage() {
                       >
                         {addingToCart === product.id ? (
                           <>
-                            <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Adding...
+                            <Loader2 className="mr-2 h-4 w-4 animate-spin" />{" "}
+                            Adding...
                           </>
                         ) : (
                           <>
@@ -583,9 +676,12 @@ export default function ProductsPage() {
         </div>
 
         <div className="text-center mt-20">
-          <h2 className="text-3xl font-bold text-green-950 mb-4">Ready to Grow Your Best Garden Yet?</h2>
+          <h2 className="text-3xl font-bold text-green-950 mb-4">
+            Ready to Grow Your Best Garden Yet?
+          </h2>
           <p className="text-lg text-green-800 max-w-2xl mx-auto mb-8">
-            Explore our full range of organic solutions and find the perfect nourishment for your plants.
+            Explore our full range of organic solutions and find the perfect
+            nourishment for your plants.
           </p>
           <Link to="/gardenplanner">
             <Button
@@ -600,4 +696,3 @@ export default function ProductsPage() {
     </div>
   );
 }
-

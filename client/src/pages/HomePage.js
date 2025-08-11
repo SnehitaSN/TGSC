@@ -34,8 +34,8 @@ import { motion } from "framer-motion";
 // import heroImage from '../assets/images/ChatGPT Image Jun 26, 2025, 11_48_48 AM.png';
 
 
-// ⭐ Define the dynamic backend URL
-const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+// // This is the correct way to access environment variables in a modern React app
+// const API_URL = import.meta.env.REACT_APP_API_URL || "http://localhost:5000";
 
 // Mock data for the blog categories and posts
 const blogCategories = [
@@ -165,6 +165,8 @@ const testimonials = [
 export default function LandingPage() {
   const [openCategory, setOpenCategory] = useState(null);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
   const [products, setProducts] = useState(homePageProducts); // Initialize with mock data
   const [blogPosts, setBlogPosts] = useState([]); // Initialize as empty array
   const navigate = useNavigate();
@@ -185,13 +187,27 @@ export default function LandingPage() {
     message: "",
   });
 
+  // Define API_URL here so it's accessible by all functions in the component
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
   useEffect(() => {
     // Fetch products for the homepage showcase
     const fetchProducts = async () => {
       setLoadingProducts(true);
       setProductsError(null);
+
+ // Get the API URL from environment variables, with a fallback for safety
+    // For Webpack/Create React App, the environment variables are in process.env
+    const API_URL = process.env.REACT_APP_API_URL;
+    if (!API_URL) {
+      console.error("REACT_APP_API_URL is not defined.");
+      setError("Server configuration error. Please try again later.");
+      setLoading(false);
+      return;
+    }
+
       try {
-        const response = await fetch(`${backendUrl}/api/products_s`);
+        const response = await fetch(`${API_URL}/api/products_s`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -211,7 +227,7 @@ export default function LandingPage() {
     // Fetch blog posts (products fetching removed as per request)
     const fetchBlogPosts = async () => {
       try {
-        const response = await fetch(`${backendUrl}/api/blog_posts`); // Assuming your backend runs on port 5000
+        const response = await fetch(`${API_URL}/api/blog_posts`); // Assuming your backend runs on port 5000
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
@@ -266,7 +282,7 @@ export default function LandingPage() {
     }
 
     try {
-      const response = await fetch(`${backendUrl}/api/cart/add`, {
+      const response = await fetch(`${API_URL}/api/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -327,7 +343,7 @@ export default function LandingPage() {
 
     try {
       const response = await fetch(
-        `${backendUrl}/api/subscribe-discount`,
+        `${API_URL}/api/subscribe-discount`,
         {
           method: "POST",
           headers: {

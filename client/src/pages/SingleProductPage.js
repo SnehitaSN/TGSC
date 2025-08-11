@@ -13,9 +13,8 @@ export default function SingleProductPage() {
   const [cartMessage, setCartMessage] = useState({ show: false, type: '', message: '' }); // New state for cart messages
 
 
-    // ⭐ ADDED: Define the backend URL from an environment variable
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
-
+ // Define API_URL here so it's accessible by all functions in the component
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -24,7 +23,7 @@ export default function SingleProductPage() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`${backendUrl}/api/products_s/${id}`);
+        const response = await fetch(`${API_URL}/api/products_s/${id}`);
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
         }
@@ -65,7 +64,7 @@ export default function SingleProductPage() {
     }
 
     try {
-      const response = await fetch(`${backendUrl}/api/cart/add`, {
+      const response = await fetch(`${API_URL}/api/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

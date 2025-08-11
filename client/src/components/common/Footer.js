@@ -7,12 +7,15 @@ function Footer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+ // Define API_URL here so it's accessible by all functions in the component
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await fetch('http://localhost:5000/api/products_s'); // Fetch products from your backend
+        const response = await fetch(`${API_URL}/api/products_s`); // Fetch products from your backend
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
         }
