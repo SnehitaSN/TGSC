@@ -16,16 +16,40 @@ const port = process.env.PORT || 5000;
 // ⭐ FIX: Configure CORS to accept requests from your Vercel frontend.
 // The CORS_ORIGIN environment variable should be a comma-separated list
 // of allowed domains, e.g., "https://tgsc-hpp5.vercel.app,http://localhost:3000"
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(",")
-  : [];
+// const allowedOrigins = process.env.CORS_ORIGIN
+//   ? process.env.CORS_ORIGIN.split(",")
+//   : [];
 
-// ⭐ Use the new cors configuration
+// // ⭐ Use the new cors configuration
+// app.use(cors({
+//   origin: (origin, callback) => {
+//     // Allow requests with no origin (like mobile apps or curl requests)
+//     if (!origin) return callback(null, true);
+//     // Allow requests from the defined origins
+//     if (allowedOrigins.indexOf(origin) === -1) {
+//       const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+//       return callback(new Error(msg), false);
+//     }
+//     return callback(null, true);
+//   },
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+//   credentials: true,
+// }));
+
+
+
+
+
+// ⭐ Updated CORS configuration to handle dynamic origins
+// The value of process.env.CORS_ORIGIN must be a comma-separated list of allowed origins.
+// Example value: "http://localhost:3000,https://your-app.vercel.app"
+const allowedOrigins = process.env.CORS_ORIGIN ? process.env.CORS_ORIGIN.split(',') : [];
+
 app.use(cors({
   origin: (origin, callback) => {
     // Allow requests with no origin (like mobile apps or curl requests)
     if (!origin) return callback(null, true);
-    // Allow requests from the defined origins
+    // Check if the requesting origin is in our allowed list
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
       return callback(new Error(msg), false);
@@ -35,6 +59,7 @@ app.use(cors({
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   credentials: true,
 }));
+
 
 
 // ⭐ UPDATED: PostgreSQL Connection Pool
