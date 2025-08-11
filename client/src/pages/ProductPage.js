@@ -312,7 +312,7 @@ export default function ProductsPage() {
 
 
     // ⭐ ADDED: Define the backend URL from an environment variable
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+  // const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
 
   const navigate = useNavigate();
 
@@ -323,7 +323,7 @@ export default function ProductsPage() {
         setLoading(true);
         setError(null);
 
-        const response = await fetch(`${backendUrl}/api/products_s`); // Your backend API URL
+        const response = await fetch(`${{import:meta.env.REACT_API_URL}}/api/products_s`); // Your backend API URL
         if (!response.ok) {
           throw new Error(`HTTP error! Status: ${response.status} - ${response.statusText}`);
         }
@@ -364,7 +364,7 @@ export default function ProductsPage() {
     }
 
     try {
-      const response = await fetch(`${backendUrl}/cart/add`, {
+      const response = await fetch(`${{import:meta.env.REACT_API_URL}}/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
