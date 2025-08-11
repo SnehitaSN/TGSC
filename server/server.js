@@ -41,12 +41,27 @@ app.use(cors({
 // Use a single DATABASE_URL environment variable for robust connections on Render.
 // IMPORTANT: The DATABASE_URL environment variable MUST be set on Render
 // to the "Internal Connection String" from your PostgreSQL dashboard.
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
+
+
+// PostgreSQL Connection Pool
 const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  user: process.env.DB_USER,
+  host: process.env.DB_HOST,
+  database: process.env.DB_DATABASE,
+  password: process.env.DB_PASSWORD,
+  port: process.env.DB_PORT,
+  // ⭐ FIX: Add SSL configuration for Render PostgreSQL database
   ssl: {
     rejectUnauthorized: false,
   },
 });
+
 
 // Middleware
 //app.use(cors(corsOptions)); // ⭐ UPDATED: Use the configured corsOptions
