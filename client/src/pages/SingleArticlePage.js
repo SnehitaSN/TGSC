@@ -11,7 +11,7 @@ export default function SingleArticlePage() {
   const [error, setError] = useState(null);
 
  // Define API_URL here so it's accessible by all functions in the component
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000" ;
   useEffect(() => {
     const fetchArticle = async () => {
       try {
@@ -70,7 +70,8 @@ export default function SingleArticlePage() {
           </Button>
         </Link>
         <img
-          src={article.image_url || "https://placehold.co/800x400/cccccc/333333?text=Article+Image"}
+          // src={article.image_url || "https://placehold.co/800x400/cccccc/333333?text=Article+Image"}
+           src={`${API_URL}${article.image_url}`}
           alt={article.title}
           className="w-full h-auto object-cover rounded-lg shadow-md mb-8"
           onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/800x400/cccccc/333333?text=Article+Image"; }}

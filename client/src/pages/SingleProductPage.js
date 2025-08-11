@@ -188,7 +188,8 @@ export default function SingleProductPage() {
         <div className="flex flex-col md:flex-row gap-8">
           <div className="md:w-1/2">
             <img
-              src={product.image_url || `https://placehold.co/600x400/cccccc/333333?text=${(product.name || 'Product').replace(/\s/g, '+')}`}
+              // src={product.image_url || `https://placehold.co/600x400/cccccc/333333?text=${(product.name || 'Product').replace(/\s/g, '+')}`}
+               src={`${API_URL}${product.image_url}`}
               alt={product.name || 'Product Image'}
               className="w-full h-auto object-cover rounded-lg shadow-md"
               onError={(e) => { e.target.onerror = null; e.target.src = `https://placehold.co/600x400/cccccc/333333?text=${(product.name || 'Product').replace(/\s/g, '+')}`; }}

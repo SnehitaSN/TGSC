@@ -17,7 +17,7 @@ import {
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
 // // ⭐ FIX: Changed process.env.VITE_API_URL to import.meta.env.VITE_API_URL
-// const API_URL = import.meta.env.REACT_APP_API_URL; 
+// const API_URL = import.meta.env.REACT_APP_API_URL;
 
 // Updated Mock data for the blog categories - now includes status for articles
 const blogCategories = [
@@ -233,10 +233,11 @@ function BlogPage() {
                   >
                     <CardContent className="p-0">
                       <img
-                        src={
-                          post.image_url ||
-                          "https://placehold.co/400x200/cccccc/333333?text=Blog+Image"
-                        } // Use image_url
+                        // src={
+                        //   post.image_url ||
+                        //   "https://placehold.co/400x200/cccccc/333333?text=Blog+Image"
+                        // } // Use image_url
+                          src={`${API_URL}${post.image_url}`}
                         width={400}
                         height={200}
                         alt={post.title}
