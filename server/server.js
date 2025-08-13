@@ -628,7 +628,7 @@ app.get("/api/products_s", async (req, res) => {
           category,
           in_stock,
           coming_soon,
-          disconut_percentage,
+          discount_percentage,
           rating,
           $1 || COALESCE(imge_url, '') AS imge_url
        FROM products_s ORDER BY id ASC`,
