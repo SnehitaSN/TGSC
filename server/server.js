@@ -146,6 +146,8 @@ const JWT_SECRET = process.env.JWT_SECRET || "supersecretjwtkey"; // Use a stron
 
 const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000"; // ⭐ Ensure this line exists and is correct
 
+const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
+
 // // Middleware to protect routes and get user ID
 // const authenticateToken = (req, res, next) => {
 //     const authHeader = req.headers['authorization'];
