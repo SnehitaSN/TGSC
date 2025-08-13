@@ -119,9 +119,8 @@ const port = process.env.PORT || 5000;
 // ⭐ Define allowed origins using an environment variable
 // Use a fallback for local development if the variable isn't set
 
-
 const allowedOrigins = [
-  'https://tgsc.onrender.com', // Your Render backend URL
+  "https://tgsc.onrender.com", // Your Render backend URL
   /https:\/\/.*\.vercel\.app$/, // Regex to allow all subdomains of vercel.app
 ];
 
@@ -130,8 +129,8 @@ const corsOptions = {
     if (!origin) {
       return callback(null, true);
     }
-    const isAllowed = allowedOrigins.some(allowedOrigin => {
-      if (typeof allowedOrigin === 'string') {
+    const isAllowed = allowedOrigins.some((allowedOrigin) => {
+      if (typeof allowedOrigin === "string") {
         return allowedOrigin === origin;
       }
       return allowedOrigin.test(origin);
@@ -139,7 +138,7 @@ const corsOptions = {
     if (isAllowed) {
       callback(null, true);
     } else {
-      callback(new Error('Not allowed by CORS'));
+      callback(new Error("Not allowed by CORS"));
     }
   },
   optionsSuccessStatus: 200,
@@ -591,31 +590,30 @@ app.delete(
 
 // --- API Endpoints ---
 // Get all products from products_s
-app.get("/api/products", async (req, res) => {
-  try {
-    const result = await pool.query(
-      `SELECT
-          id,
-          name,
-          price,
-          description,
-          image,
-          category,
-          in_stock,
-          coming_soon,
-          disconut_percntage,
-          rating,
-          $1 || COALESCE(imge_url, '') AS imge_url
-       FROM products_s ORDER BY id ASC`,
-      [BASE_URL]
-    );
-    res.json(result.rows);
-  } catch (err) {
-    console.error("Error fetching products:", err);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
+// app.get("/api/products_s", async (req, res) => {
+//   try {
+//     const result = await pool.query(
+//       `SELECT
+//           id,
+//           name,
+//           price,
+//           description,
+//           image,
+//           category,
+//           in_stock,
+//           coming_soon,
+//           disconut_percntage,
+//           rating,
+//           $1 || COALESCE(imge_url, '') AS imge_url
+//        FROM products_s ORDER BY id ASC`,
+//       [BASE_URL]
+//     );
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error("Error fetching products:", err);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
 
 // Get all products from products_s modified BASE_ URL
 app.get("/api/products_s", async (req, res) => {
@@ -630,7 +628,7 @@ app.get("/api/products_s", async (req, res) => {
           category,
           in_stock,
           coming_soon,
-          disconut_percntage,
+          disconut_percentage,
           rating,
           $1 || COALESCE(imge_url, '') AS imge_url
        FROM products_s ORDER BY id ASC`,
@@ -663,32 +661,30 @@ app.get("/api/products_s", async (req, res) => {
 
 // Get a single product by ID from products_s modified BASE_ URL
 
-app.get("/api/products_s/:id", async (req, res) => {
-  const { id } = req.params;
+app.get("/api/products_s", async (req, res) => {
   try {
-    const result = await pool.query(`
-      SELECT
-        id,
-        name,
-        description,
-        price,
-        category,
-        COALESCE(image_url, '') AS image_url,
-       
-      FROM products_s
-      ORDER BY id ASC
-    `);
-    if (result.rows.length > 0) {
-      res.json(result.rows[0]);
-    } else {
-      res.status(404).json({ message: "Product not found" });
-    }
+    const result = await pool.query(
+      `SELECT
+          id,
+          name,
+          price,
+          description,
+          image,
+          category,
+          in_stock,
+          coming_soon,
+          disconut_percentage,
+          rating,
+          $1 || COALESCE(imge_url, '') AS imge_url
+       FROM products_s ORDER BY id ASC`,
+      [BASE_URL]
+    );
+    res.json(result.rows);
   } catch (err) {
-    console.error(`Error fetching product with ID ${id}:`, err);
+    console.error("Error fetching products:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // // ⭐ GET all blog posts
 // app.get("/api/blog_posts", async (req, res) => {
@@ -717,7 +713,6 @@ app.get("/api/blog_posts", async (req, res) => {
           id,
           title,
           excerpt,
-          context,
           content,
           image,
           category,
@@ -769,7 +764,6 @@ app.get("/api/blog_posts", async (req, res) => {
           id,
           title,
           excerpt,
-          context,
           content,
           image,
           category,
