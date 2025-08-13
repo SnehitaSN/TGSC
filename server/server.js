@@ -542,13 +542,19 @@ app.delete(
 // Get all products from products_s modified BASE_ URL
 app.get("/api/products_s", async (req, res) => {
   try {
-    const result = await pool.query(
-      `SELECT id, name, description, price, category, stock_quantity, weight, dimensions,
-              $1 ||  COALESCE(image_url, '') AS image_url, -- ⭐ UPDATED: Use || operator
-              created_at, updated_at
-       FROM products_s ORDER BY id ASC`,
-      [BASE_URL]
-    );
+    const result = await pool.query(`
+      SELECT
+        id,
+        name,
+        description,
+        price,
+        category,
+        COALESCE(image_url, '') AS image_url,
+        created_at,
+        updated_at
+      FROM products_s
+      ORDER BY id ASC
+    `);
     res.json(result.rows);
   } catch (err) {
     console.error("Error fetching products:", err);
@@ -579,13 +585,19 @@ app.get("/api/products_s", async (req, res) => {
 app.get("/api/products_s/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    const result = await pool.query(
-      `SELECT id, name, description, price, category, stock_quantity, weight, dimensions,
-              $2 || COALESCE(image_url, '') AS image_url, -- ⭐ UPDATED: Use || operator
-              created_at, updated_at
-       FROM products_s WHERE id = $1`,
-      [id, BASE_URL]
-    );
+    const result = await pool.query(`
+      SELECT
+        id,
+        name,
+        description,
+        price,
+        category,
+        COALESCE(image_url, '') AS image_url,
+        created_at,
+        updated_at
+      FROM products_s
+      ORDER BY id ASC
+    `);
     if (result.rows.length > 0) {
       res.json(result.rows[0]);
     } else {
