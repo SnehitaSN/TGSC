@@ -90,6 +90,7 @@ const port = process.env.PORT || 5000;
 const allowedOrigins = [
   "https://tgsc.onrender.com",
   "https://tgsc-hpp5.vercel.app/",
+ " https://tgsc-hpp5-git-main-snehitasns-projects.vercel.app/"
 ];
 
 const corsOptions = {
