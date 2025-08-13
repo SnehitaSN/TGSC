@@ -591,31 +591,9 @@ app.delete(
 
 // --- API Endpoints ---
 // Get all products from products_s
-// app.get("/api/products_s", async (req, res) => {
-//   try {
-//     const result = await pool.query("SELECT * FROM products_s ORDER BY id ASC");
-//     res.json(result.rows);
-//   } catch (err) {
-//     console.error("Error fetching products:", err);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-
-// Get all products from products_s modified BASE_ URL
 app.get("/api/products_s", async (req, res) => {
   try {
-    const result = await pool.query(`
-      SELECT
-        id,
-        name,
-        description,
-        price,
-        category,
-        COALESCE(image_url, '') AS image_url,
-       
-      FROM products_s
-      ORDER BY id ASC
-    `);
+    const result = await pool.query("SELECT * FROM products_s ORDER BY id ASC");
     res.json(result.rows);
   } catch (err) {
     console.error("Error fetching products:", err);
@@ -623,23 +601,45 @@ app.get("/api/products_s", async (req, res) => {
   }
 });
 
-// // Get a single product by ID from products_s
-// app.get("/api/products_s/:id", async (req, res) => {
-//   const { id } = req.params;
+// Get all products from products_s modified BASE_ URL
+// app.get("/api/products_s", async (req, res) => {
 //   try {
-//     const result = await pool.query("SELECT * FROM products_s WHERE id = $1", [
-//       id,
-//     ]);
-//     if (result.rows.length > 0) {
-//       res.json(result.rows[0]);
-//     } else {
-//       res.status(404).json({ message: "Product not found" });
-//     }
+//     const result = await pool.query(`
+//       SELECT
+//         id,
+//         name,
+//         description,
+//         price,
+//         category,
+//         COALESCE(image_url, '') AS image_url,
+       
+//       FROM products_s
+//       ORDER BY id ASC
+//     `);
+//     res.json(result.rows);
 //   } catch (err) {
-//     console.error(`Error fetching product with ID ${id}:`, err);
+//     console.error("Error fetching products:", err);
 //     res.status(500).json({ error: "Internal Server Error" });
 //   }
 // });
+
+// // Get a single product by ID from products_s
+app.get("/api/products_s/:id", async (req, res) => {
+  const { id } = req.params;
+  try {
+    const result = await pool.query("SELECT * FROM products_s WHERE id = $1", [
+      id,
+    ]);
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).json({ message: "Product not found" });
+    }
+  } catch (err) {
+    console.error(`Error fetching product with ID ${id}:`, err);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 // Get a single product by ID from products_s modified BASE_ URL
 
@@ -669,33 +669,13 @@ app.get("/api/products_s/:id", async (req, res) => {
   }
 });
 // // ⭐ GET all blog posts
-// app.get("/api/blog_posts", async (req, res) => {
-//   try {
-//     // ⭐ Ensure 'status' and 'image_url' are selected
-//     const result = await pool.query(
-//       `SELECT id, title, excerpt, image_url, category, author, publish_date, read_time, status
-//              FROM blog_posts
-//              ORDER BY publish_date DESC`
-//     );
-//     res.status(200).json(result.rows);
-//   } catch (error) {
-//     console.error("Error fetching blog posts:", error);
-//     res
-//       .status(500)
-//       .json({ message: "Internal server error while fetching blog posts." });
-//   }
-// });
-
-// ⭐ GET all blog posts modified BASE_ URL
-
 app.get("/api/blog_posts", async (req, res) => {
   try {
+    // ⭐ Ensure 'status' and 'image_url' are selected
     const result = await pool.query(
-      `SELECT id, title, excerpt, $1 ||  COALESCE(image_url, '') AS image_url, -- ⭐ UPDATED: Use || operator
-             category, author, publish_date, read_time, status
+      `SELECT id, title, excerpt, image_url, category, author, publish_date, read_time, status
              FROM blog_posts
-             ORDER BY publish_date DESC`,
-      [BASE_URL]
+             ORDER BY publish_date DESC`
     );
     res.status(200).json(result.rows);
   } catch (error) {
@@ -706,41 +686,36 @@ app.get("/api/blog_posts", async (req, res) => {
   }
 });
 
-// // ⭐ GET a single blog post by ID
-// app.get("/api/blog_posts/:id", async (req, res) => {
-//   const { id } = req.params;
+// ⭐ GET all blog posts modified BASE_ URL
+
+// app.get("/api/blog_posts", async (req, res) => {
 //   try {
-//     // ⭐ Ensure 'status' and 'image_url' are selected
 //     const result = await pool.query(
-//       `SELECT id, title, excerpt, content, image_url, category, author, publish_date, read_time, status
+//       `SELECT id, title, excerpt, $1 ||  COALESCE(image_url, '') AS image_url, -- ⭐ UPDATED: Use || operator
+//              category, author, publish_date, read_time, status
 //              FROM blog_posts
-//              WHERE id = $1`,
-//       [id]
+//              ORDER BY publish_date DESC`,
+//       [BASE_URL]
 //     );
-//     if (result.rows.length > 0) {
-//       res.status(200).json(result.rows[0]);
-//     } else {
-//       res.status(404).json({ message: "Blog post not found." });
-//     }
+//     res.status(200).json(result.rows);
 //   } catch (error) {
-//     console.error(`Error fetching blog post with ID ${id}:`, error);
+//     console.error("Error fetching blog posts:", error);
 //     res
 //       .status(500)
-//       .json({ message: "Internal server error while fetching blog post." });
+//       .json({ message: "Internal server error while fetching blog posts." });
 //   }
 // });
 
-// ⭐ GET a single blog post by ID modified BASE_ URL
-// ⭐ GET a single blog post by ID
+// // ⭐ GET a single blog post by ID
 app.get("/api/blog_posts/:id", async (req, res) => {
   const { id } = req.params;
   try {
+    // ⭐ Ensure 'status' and 'image_url' are selected
     const result = await pool.query(
-      `SELECT id, title, excerpt, content, $2 ||  COALESCE(image_url, '') AS image_url, -- ⭐ UPDATED: Use || operator
-             category, author, publish_date, read_time, status
+      `SELECT id, title, excerpt, content, image_url, category, author, publish_date, read_time, status
              FROM blog_posts
              WHERE id = $1`,
-      [id, BASE_URL]
+      [id]
     );
     if (result.rows.length > 0) {
       res.status(200).json(result.rows[0]);
@@ -754,6 +729,31 @@ app.get("/api/blog_posts/:id", async (req, res) => {
       .json({ message: "Internal server error while fetching blog post." });
   }
 });
+
+// ⭐ GET a single blog post by ID modified BASE_ URL
+// // ⭐ GET a single blog post by ID
+// app.get("/api/blog_posts/:id", async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const result = await pool.query(
+//       `SELECT id, title, excerpt, content, $2 ||  COALESCE(image_url, '') AS image_url, -- ⭐ UPDATED: Use || operator
+//              category, author, publish_date, read_time, status
+//              FROM blog_posts
+//              WHERE id = $1`,
+//       [id, BASE_URL]
+//     );
+//     if (result.rows.length > 0) {
+//       res.status(200).json(result.rows[0]);
+//     } else {
+//       res.status(404).json({ message: "Blog post not found." });
+//     }
+//   } catch (error) {
+//     console.error(`Error fetching blog post with ID ${id}:`, error);
+//     res
+//       .status(500)
+//       .json({ message: "Internal server error while fetching blog post." });
+//   }
+// });
 
 // POST endpoint for newsletter subscription and discount
 app.post("/api/subscribe-discount", async (req, res) => {
