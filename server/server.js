@@ -540,13 +540,12 @@ app.delete(
 // Get all products from products_s modified BASE_ URL
 app.get("/api/products_s", async (req, res) => {
   try {
-    // ⭐ MODIFIED: Prepend BASE_URL to image_url for all products
     const result = await pool.query(
       `SELECT id, name, description, price, category, stock_quantity, weight, dimensions,
-              CONCAT($1, image_url) AS image_url, -- Prepend BASE_URL
+              $1 || image_url AS image_url, -- ⭐ UPDATED: Use || operator
               created_at, updated_at
        FROM products_s ORDER BY id ASC`,
-      [BASE_URL] // Pass BASE_URL as a parameter
+      [BASE_URL]
     );
     res.json(result.rows);
   } catch (err) {
@@ -574,16 +573,16 @@ app.get("/api/products_s", async (req, res) => {
 // });
 
 // Get a single product by ID from products_s modified BASE_ URL
+
 app.get("/api/products_s/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    // ⭐ MODIFIED: Prepend BASE_URL to image_url for a single product
     const result = await pool.query(
       `SELECT id, name, description, price, category, stock_quantity, weight, dimensions,
-              CONCAT($2, image_url) AS image_url, -- Prepend BASE_URL
+              $2 || image_url AS image_url, -- ⭐ UPDATED: Use || operator
               created_at, updated_at
        FROM products_s WHERE id = $1`,
-      [id, BASE_URL] // Pass ID and BASE_URL as parameters
+      [id, BASE_URL]
     );
     if (result.rows.length > 0) {
       res.json(result.rows[0]);
@@ -595,7 +594,6 @@ app.get("/api/products_s/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 // // ⭐ GET all blog posts
 // app.get("/api/blog_posts", async (req, res) => {
 //   try {
@@ -615,14 +613,15 @@ app.get("/api/products_s/:id", async (req, res) => {
 // });
 
 // ⭐ GET all blog posts modified BASE_ URL
+
 app.get("/api/blog_posts", async (req, res) => {
   try {
-    // ⭐ MODIFIED: Prepend BASE_URL to image_url for all blog posts
     const result = await pool.query(
-      `SELECT id, title, excerpt, CONCAT($1, image_url) AS image_url, category, author, publish_date, read_time, status
+      `SELECT id, title, excerpt, $1 || image_url AS image_url, -- ⭐ UPDATED: Use || operator
+             category, author, publish_date, read_time, status
              FROM blog_posts
              ORDER BY publish_date DESC`,
-      [BASE_URL] // Pass BASE_URL as a parameter
+      [BASE_URL]
     );
     res.status(200).json(result.rows);
   } catch (error) {
@@ -658,15 +657,16 @@ app.get("/api/blog_posts", async (req, res) => {
 // });
 
 // ⭐ GET a single blog post by ID modified BASE_ URL
+// ⭐ GET a single blog post by ID
 app.get("/api/blog_posts/:id", async (req, res) => {
   const { id } = req.params;
   try {
-    // ⭐ MODIFIED: Prepend BASE_URL to image_url for a single blog post
     const result = await pool.query(
-      `SELECT id, title, excerpt, content, CONCAT($2, image_url) AS image_url, category, author, publish_date, read_time, status
+      `SELECT id, title, excerpt, content, $2 || image_url AS image_url, -- ⭐ UPDATED: Use || operator
+             category, author, publish_date, read_time, status
              FROM blog_posts
              WHERE id = $1`,
-      [id, BASE_URL] // Pass ID and BASE_URL as parameters
+      [id, BASE_URL]
     );
     if (result.rows.length > 0) {
       res.status(200).json(result.rows[0]);
