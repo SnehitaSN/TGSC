@@ -542,7 +542,7 @@ app.get("/api/products_s", async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, name, description, price, category, stock_quantity, weight, dimensions,
-              $1 || image_url AS image_url, -- ⭐ UPDATED: Use || operator
+              $1 ||  COALESCE(image_url, '') AS image_url, -- ⭐ UPDATED: Use || operator
               created_at, updated_at
        FROM products_s ORDER BY id ASC`,
       [BASE_URL]
@@ -579,7 +579,7 @@ app.get("/api/products_s/:id", async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT id, name, description, price, category, stock_quantity, weight, dimensions,
-              $2 || image_url AS image_url, -- ⭐ UPDATED: Use || operator
+              $2 || COALESCE(image_url, '') AS image_url, -- ⭐ UPDATED: Use || operator
               created_at, updated_at
        FROM products_s WHERE id = $1`,
       [id, BASE_URL]
@@ -617,7 +617,7 @@ app.get("/api/products_s/:id", async (req, res) => {
 app.get("/api/blog_posts", async (req, res) => {
   try {
     const result = await pool.query(
-      `SELECT id, title, excerpt, $1 || image_url AS image_url, -- ⭐ UPDATED: Use || operator
+      `SELECT id, title, excerpt, $1 ||  COALESCE(image_url, '') AS image_url, -- ⭐ UPDATED: Use || operator
              category, author, publish_date, read_time, status
              FROM blog_posts
              ORDER BY publish_date DESC`,
@@ -662,7 +662,7 @@ app.get("/api/blog_posts/:id", async (req, res) => {
   const { id } = req.params;
   try {
     const result = await pool.query(
-      `SELECT id, title, excerpt, content, $2 || image_url AS image_url, -- ⭐ UPDATED: Use || operator
+      `SELECT id, title, excerpt, content, $2 ||  COALESCE(image_url, '') AS image_url, -- ⭐ UPDATED: Use || operator
              category, author, publish_date, read_time, status
              FROM blog_posts
              WHERE id = $1`,
