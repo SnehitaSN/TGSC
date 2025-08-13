@@ -39,26 +39,27 @@ const port = process.env.PORT || 5000;
 // ⭐ Updated CORS configuration to handle dynamic origins
 // The value of process.env.CORS_ORIGIN must be a comma-separated list of allowed origins.
 // Example value: "http://localhost:3000,https://your-app.vercel.app"
-const allowedOrigins = process.env.CORS_ORIGIN
-  ? process.env.CORS_ORIGIN.split(",")
-  : [];
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      if (!origin) return callback(null, true);
-      // Check if the requesting origin is in our allowed list
-      if (allowedOrigins.indexOf(origin) === -1) {
-        const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
-        return callback(new Error(msg), false);
-      }
-      return callback(null, true);
-    },
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  })
-);
+// const allowedOrigins = process.env.CORS_ORIGIN
+//   ? process.env.CORS_ORIGIN.split(",")
+//   : [];
+
+// app.use(
+//   cors({
+//     origin: (origin, callback) => {
+//       // Allow requests with no origin (like mobile apps or curl requests)
+//       if (!origin) return callback(null, true);
+//       // Check if the requesting origin is in our allowed list
+//       if (allowedOrigins.indexOf(origin) === -1) {
+//         const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+//         return callback(new Error(msg), false);
+//       }
+//       return callback(null, true);
+//     },
+//     methods: ["GET", "POST", "PUT", "DELETE"],
+//     credentials: true,
+//   })
+// );
 
 // ⭐ UPDATED: PostgreSQL Connection Pool
 // Use a single DATABASE_URL environment variable for robust connections on Render.
@@ -85,6 +86,25 @@ app.use(
 
 // PostgreSQL Connection Pool Configuration
 // These values MUST be set as environment variables on the Render dashboard.
+
+const allowedOrigins = [
+  "https://tgsc.onrender.com",
+  "https://tgsc-hpp5.vercel.app/",
+];
+
+const corsOptions = {
+  origin: function (origin, callback) {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
+  optionsSuccessStatus: 200,
+};
+
+app.use(cors(corsOptions));
+
 const pool = new Pool({
   user: process.env.DB_USER,
   host: process.env.DB_HOST,
@@ -550,8 +570,7 @@ app.get("/api/products_s", async (req, res) => {
         price,
         category,
         COALESCE(image_url, '') AS image_url,
-        created_at,
-        updated_at
+       
       FROM products_s
       ORDER BY id ASC
     `);
@@ -593,8 +612,7 @@ app.get("/api/products_s/:id", async (req, res) => {
         price,
         category,
         COALESCE(image_url, '') AS image_url,
-        created_at,
-        updated_at
+       
       FROM products_s
       ORDER BY id ASC
     `);
