@@ -70,8 +70,8 @@ export default function SingleArticlePage() {
           </Button>
         </Link>
         <img
-          // src={article.image_url || "https://placehold.co/800x400/cccccc/333333?text=Article+Image"}
-           src={`${API_URL}${article.image_url}`}
+           src={article.image_url || "https://placehold.co/800x400/cccccc/333333?text=Article+Image"}
+          // src={`${API_URL}${article.image_url}`}
           alt={article.title}
           className="w-full h-auto object-cover rounded-lg shadow-md mb-8"
           onError={(e) => { e.target.onerror = null; e.target.src = "https://placehold.co/800x400/cccccc/333333?text=Article+Image"; }}

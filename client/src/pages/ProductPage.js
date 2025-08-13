@@ -559,7 +559,8 @@ export default function ProductsPage() {
                   className="block relative overflow-hidden"
                 >
                   <img
-                    src={`${API_URL}${product.image_url}`} // ⭐ Changed to product.image_url
+                     src={product.image || `https://placehold.co/400x300/cccccc/333333?text=${product.name.replace(/\s/g, '+')}`}
+                    //src={`${API_URL}${product.image_url}`} // ⭐ Changed to product.image_url
                     alt={productName}
                     width={400}
                     height={300}

@@ -618,7 +618,7 @@ app.get("/api/products", async (req, res) => {
 
 
 // Get all products from products_s modified BASE_ URL
-app.get("/api/products", async (req, res) => {
+app.get("/api/products_s", async (req, res) => {
   try {
     const result = await pool.query(
       `SELECT

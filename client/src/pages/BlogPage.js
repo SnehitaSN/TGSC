@@ -233,12 +233,12 @@ function BlogPage() {
                   >
                     <CardContent className="p-0">
                       <img
-                        // src={
-                        //   post.image_url ||
-                        //   "https://placehold.co/400x200/cccccc/333333?text=Blog+Image"
-                        // } // Use image_url
-                          src={`${API_URL}${post.image_url}`}
-                        width={400}
+                        src={
+                          post.image_url ||
+                          "https://placehold.co/400x200/cccccc/333333?text=Blog+Image"
+                        } // Use image_url
+                        //   src={`${API_URL}${post.image_url}`}
+                        // width={400}
                         height={200}
                         alt={post.title}
                         className="w-full h-56 object-cover rounded-t-xl shadow-inner"
