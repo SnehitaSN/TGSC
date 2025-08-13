@@ -87,15 +87,46 @@ const port = process.env.PORT || 5000;
 // PostgreSQL Connection Pool Configuration
 // These values MUST be set as environment variables on the Render dashboard.
 
-const allowedOrigins = [
-  "https://tgsc.onrender.com",
-  "https://tgsc-hpp5.vercel.app/",
- " https://tgsc-hpp5-git-main-snehitasns-projects.vercel.app/"
-];
+// const allowedOrigins = [
+//   "https://tgsc.onrender.com", // Your Render backend URL
+//   /https:\/\/.*\.vercel\.app$/, // Regex to allow all Vercel subdomains
+// ];
+
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     // Allow requests with no origin (like mobile apps or curl)
+//     if (!origin) return callback(null, true);
+
+//     // Check if the origin is in our allowed list or matches the regex
+//     const isAllowed = allowedOrigins.some((allowedOrigin) => {
+//       if (typeof allowedOrigin === "string") {
+//         return allowedOrigin === origin;
+//       }
+//       return allowedOrigin.test(origin);
+//     });
+
+//     if (isAllowed) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   optionsSuccessStatus: 200,
+// };
+
+// app.use(cors(corsOptions));
+
+// ⭐ Define allowed origins using an environment variable
+// Use a fallback for local development if the variable isn't set
+
+
+const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
+  ? process.env.ALLOWED_ORIGINS.split(",")
+  : ["http://localhost:3000", "http://localhost:5000"];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
