@@ -120,16 +120,26 @@ const port = process.env.PORT || 5000;
 // Use a fallback for local development if the variable isn't set
 
 
-const ALLOWED_ORIGINS = process.env.ALLOWED_ORIGINS
-  ? process.env.ALLOWED_ORIGINS.split(",")
-  : ["http://localhost:3000", "http://localhost:5000"];
+const allowedOrigins = [
+  'https://tgsc.onrender.com', // Your Render backend URL
+  /https:\/\/.*\.vercel\.app$/, // Regex to allow all subdomains of vercel.app
+];
 
 const corsOptions = {
   origin: function (origin, callback) {
-    if (!origin || ALLOWED_ORIGINS.includes(origin)) {
+    if (!origin) {
+      return callback(null, true);
+    }
+    const isAllowed = allowedOrigins.some(allowedOrigin => {
+      if (typeof allowedOrigin === 'string') {
+        return allowedOrigin === origin;
+      }
+      return allowedOrigin.test(origin);
+    });
+    if (isAllowed) {
       callback(null, true);
     } else {
-      callback(new Error("Not allowed by CORS"));
+      callback(new Error('Not allowed by CORS'));
     }
   },
   optionsSuccessStatus: 200,
