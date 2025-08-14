@@ -630,7 +630,7 @@ app.get("/api/products_s", async (req, res) => {
           coming_soon,
           discount_percentage,
           rating,
-          $1 || COALESCE(imge_url, '') AS imge_url
+          $1 || COALESCE(image_url, '') AS image_url
        FROM products_s ORDER BY id ASC`,
       [BASE_URL]
     );
@@ -675,7 +675,7 @@ app.get("/api/products_s", async (req, res) => {
           coming_soon,
           disconut_percentage,
           rating,
-          $1 || COALESCE(imge_url, '') AS imge_url
+          $1 || COALESCE(image_url, '') AS image_url
        FROM products_s ORDER BY id ASC`,
       [BASE_URL]
     );
