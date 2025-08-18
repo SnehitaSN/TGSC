@@ -44,10 +44,15 @@ app.use(cors(corsOptions));
 
 // ⭐ UPDATED: PostgreSQL Connection Pool Configuration
 // Uses DATABASE_URL for Render and falls back to individual variables for local
-const isProduction = process.env.NODE_ENV === "production";
-const connectionString = isProduction
-  ? process.env.DATABASE_URL
-  : `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
+// const isProduction = process.env.NODE_ENV === "production";
+// const connectionString = isProduction
+//   ? process.env.DATABASE_URL
+//   : `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
+
+
+
+// ⭐ FIXED: Simplified connection to always use DATABASE_URL
+const connectionString = process.env.DATABASE_URL;
 
 const pool = new Pool({
   connectionString: connectionString,
