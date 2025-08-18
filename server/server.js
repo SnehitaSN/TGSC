@@ -13,122 +13,12 @@ const path = require("path"); // ⭐ ADDED: Import the 'path' module
 const app = express();
 const port = process.env.PORT || 5000;
 
-// ⭐ FIX: Configure CORS to accept requests from your Vercel frontend.
-// The CORS_ORIGIN environment variable should be a comma-separated list
-// of allowed domains, e.g., "https://tgsc-hpp5.vercel.app,http://localhost:3000"
-// const allowedOrigins = process.env.CORS_ORIGIN
-//   ? process.env.CORS_ORIGIN.split(",")
-//   : [];
-
-// // ⭐ Use the new cors configuration
-// app.use(cors({
-//   origin: (origin, callback) => {
-//     // Allow requests with no origin (like mobile apps or curl requests)
-//     if (!origin) return callback(null, true);
-//     // Allow requests from the defined origins
-//     if (allowedOrigins.indexOf(origin) === -1) {
-//       const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
-//       return callback(new Error(msg), false);
-//     }
-//     return callback(null, true);
-//   },
-//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
-//   credentials: true,
-// }));
-
-// ⭐ Updated CORS configuration to handle dynamic origins
-// The value of process.env.CORS_ORIGIN must be a comma-separated list of allowed origins.
-// Example value: "http://localhost:3000,https://your-app.vercel.app"
-
-// const allowedOrigins = process.env.CORS_ORIGIN
-//   ? process.env.CORS_ORIGIN.split(",")
-//   : [];
-
-// app.use(
-//   cors({
-//     origin: (origin, callback) => {
-//       // Allow requests with no origin (like mobile apps or curl requests)
-//       if (!origin) return callback(null, true);
-//       // Check if the requesting origin is in our allowed list
-//       if (allowedOrigins.indexOf(origin) === -1) {
-//         const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
-//         return callback(new Error(msg), false);
-//       }
-//       return callback(null, true);
-//     },
-//     methods: ["GET", "POST", "PUT", "DELETE"],
-//     credentials: true,
-//   })
-// );
-
-// ⭐ UPDATED: PostgreSQL Connection Pool
-// Use a single DATABASE_URL environment variable for robust connections on Render.
-// IMPORTANT: The DATABASE_URL environment variable MUST be set on Render
-// to the "Internal Connection String" from your PostgreSQL dashboard.
-// const pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-//   ssl: {
-//     rejectUnauthorized: false,
-//   },
-// });
-
-// // PostgreSQL Connection Pool
-// const pool = new Pool({
-//   user: process.env.DB_USER,
-//   host: process.env.DB_HOST,
-//   database: process.env.DB_DATABASE,
-//   password: process.env.DB_PASSWORD,
-//   port: process.env.DB_PORT,
-//   ssl: {
-//     rejectUnauthorized: false,
-//   },
-// });
-
-// PostgreSQL Connection Pool Configuration
-// These values MUST be set as environment variables on the Render dashboard.
-
-// const allowedOrigins = [
-//   "https://tgsc.onrender.com", // Your Render backend URL
-//   /https:\/\/.*\.vercel\.app$/, // Regex to allow all Vercel subdomains
-// ];
-
-// const corsOptions = {
-//   origin: function (origin, callback) {
-//     // Allow requests with no origin (like mobile apps or curl)
-//     if (!origin) return callback(null, true);
-
-//     // Check if the origin is in our allowed list or matches the regex
-//     const isAllowed = allowedOrigins.some((allowedOrigin) => {
-//       if (typeof allowedOrigin === "string") {
-//         return allowedOrigin === origin;
-//       }
-//       return allowedOrigin.test(origin);
-//     });
-
-//     if (isAllowed) {
-//       callback(null, true);
-//     } else {
-//       callback(new Error("Not allowed by CORS"));
-//     }
-//   },
-//   optionsSuccessStatus: 200,
-// };
-
-// app.use(cors(corsOptions));
-
 // ⭐ Define allowed origins using an environment variable
-// Use a fallback for local development if the variable isn't set
-
 const allowedOrigins = [
-  "http://localhost:5000 ",
-  "https://tgsc.onrender.com", // Your Render backend URL
-  /https:\/\/.*\.vercel\.app$/, // Regex to allow all subdomains of vercel.app
+  "http://localhost:5000",
+  "https://tgsc.onrender.com",
+  /https:\/\/.*\.vercel\.app$/,
 ];
-
-// const allowedOrigins = [
-//   "http://localhost:5000 ",
- 
-// ];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -152,20 +42,8 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
-// This SSL configuration is essential for connecting to Render's hosted PostgreSQL.
-// const pool = new Pool({
-//   user: process.env.DB_USER,
-//   host: process.env.DB_HOST,
-//   database: process.env.DB_DATABASE,
-//   password: process.env.DB_PASSWORD,
-//   port: process.env.DB_PORT,
-//   // This SSL configuration is essential for connecting to Render's hosted PostgreSQL.
-//   ssl: {
-//     rejectUnauthorized: false,
-//   },
-// });
-
-// Dynamic PostgreSQL Connection Pool Configuration
+// ⭐ UPDATED: PostgreSQL Connection Pool Configuration
+// Uses DATABASE_URL for Render and falls back to individual variables for local
 const isProduction = process.env.NODE_ENV === "production";
 const connectionString = isProduction
   ? process.env.DATABASE_URL
@@ -173,7 +51,6 @@ const connectionString = isProduction
 
 const pool = new Pool({
   connectionString: connectionString,
-  // Only add SSL configuration in production
   ssl: isProduction ? { rejectUnauthorized: false } : false,
 });
 
@@ -608,33 +485,7 @@ app.delete(
 );
 
 // --- API Endpoints ---
-// Get all products from products_s
-// app.get("/api/products_s", async (req, res) => {
-//   try {
-//     const result = await pool.query(
-//       `SELECT
-//           id,
-//           name,
-//           price,
-//           description,
-//           image,
-//           category,
-//           in_stock,
-//           coming_soon,
-//           disconut_percntage,
-//           rating,
-//           $1 || COALESCE(imge_url, '') AS imge_url
-//        FROM products_s ORDER BY id ASC`,
-//       [BASE_URL]
-//     );
-//     res.json(result.rows);
-//   } catch (err) {
-//     console.error("Error fetching products:", err);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-
-// Get all products from products_s modified BASE_ URL
+// Get all products from products_s image_url
 app.get("/api/products_s", async (req, res) => {
   try {
     const result = await pool.query(
@@ -649,9 +500,8 @@ app.get("/api/products_s", async (req, res) => {
           coming_soon,
           discount_percentage,
           rating,
-          $1 || COALESCE(image_url, '') AS image_url
-       FROM products_s ORDER BY id ASC`,
-      [BASE_URL]
+          image_url
+       FROM products_s ORDER BY id ASC`
     );
     res.json(result.rows);
   } catch (err) {
@@ -660,27 +510,35 @@ app.get("/api/products_s", async (req, res) => {
   }
 });
 
-// // Get a single product by ID from products_s
-// app.get("/api/products_s/:id", async (req, res) => {
-//   const { id } = req.params;
+// Get all products from products_s modified BASE_ URL
+// app.get("/api/products_s", async (req, res) => {
 //   try {
-//     const result = await pool.query("SELECT * FROM products_s WHERE id = $1", [
-//       id,
-//     ]);
-//     if (result.rows.length > 0) {
-//       res.json(result.rows[0]);
-//     } else {
-//       res.status(404).json({ message: "Product not found" });
-//     }
+//     const result = await pool.query(
+//       `SELECT
+//           id,
+//           name,
+//           price,
+//           description,
+//           image,
+//           category,
+//           in_stock,
+//           coming_soon,
+//           discount_percentage,
+//           rating,
+//           $1 || COALESCE(image_url, '') AS image_url
+//        FROM products_s ORDER BY id ASC`,
+//       [BASE_URL]
+//     );
+//     res.json(result.rows);
 //   } catch (err) {
-//     console.error(`Error fetching product with ID ${id}:`, err);
+//     console.error("Error fetching products:", err);
 //     res.status(500).json({ error: "Internal Server Error" });
 //   }
 // });
 
-// Get a single product by ID from products_s modified BASE_ URL
-
-app.get("/api/products_s", async (req, res) => {
+// // Get a single product by ID from products_s image_url
+app.get("/api/products_s/:id", async (req, res) => {
+  const { id } = req.params;
   try {
     const result = await pool.query(
       `SELECT
@@ -692,91 +550,103 @@ app.get("/api/products_s", async (req, res) => {
           category,
           in_stock,
           coming_soon,
-          disconut_percentage,
+          discount_percentage,
           rating,
-          $1 || COALESCE(image_url, '') AS image_url
-       FROM products_s ORDER BY id ASC`,
-      [BASE_URL]
+          image_url
+       FROM products_s WHERE id = $1`,
+      [id]
     );
-    res.json(result.rows);
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).json({ message: "Product not found" });
+    }
   } catch (err) {
-    console.error("Error fetching products:", err);
+    console.error(`Error fetching product with ID ${id}:`, err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// // ⭐ GET all blog posts
-// app.get("/api/blog_posts", async (req, res) => {
+// Get a single product by ID from products_s modified BASE_ URL
+// app.get("/api/products_s", async (req, res) => {
 //   try {
-//     // ⭐ Ensure 'status' and 'image_url' are selected
 //     const result = await pool.query(
-//       `SELECT id, title, excerpt, image_url, category, author, publish_date, read_time, status
-//              FROM blog_posts
-//              ORDER BY publish_date DESC`
+//       `SELECT
+//           id,
+//           name,
+//           price,
+//           description,
+//           image,
+//           category,
+//           in_stock,
+//           coming_soon,
+//           disconut_percentage,
+//           rating,
+//           $1 || COALESCE(image_url, '') AS image_url
+//        FROM products_s ORDER BY id ASC`,
+//       [BASE_URL]
 //     );
-//     res.status(200).json(result.rows);
-//   } catch (error) {
-//     console.error("Error fetching blog posts:", error);
-//     res
-//       .status(500)
-//       .json({ message: "Internal server error while fetching blog posts." });
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error("Error fetching products:", err);
+//     res.status(500).json({ error: "Internal Server Error" });
 //   }
 // });
+
+// // ⭐ GET all blog posts image_url
+app.get("/api/blog_posts", async (req, res) => {
+  try {
+    const result = await pool.query(
+      `SELECT
+          id,
+          title,
+          excerpt,
+          content,
+          image,
+          category,
+          author,
+          publish_date,
+          read_time,
+          status,
+          image_url
+       FROM blog_posts ORDER BY publish_date DESC`
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error("Error fetching blog posts:", error);
+    res.status(500).json({ error: "Internal Server Error" });
+  }
+});
 
 // ⭐ GET all blog posts modified BASE_ URL
-
-app.get("/api/blog_posts", async (req, res) => {
-  try {
-    const result = await pool.query(
-      `SELECT
-          id,
-          title,
-          excerpt,
-          content,
-          image,
-          category,
-          author,
-          publish_date,
-          read_time,
-          status,
-          $1 || COALESCE(image_url, '') AS image_url
-       FROM blog_posts ORDER BY publish_date DESC`,
-      [BASE_URL]
-    );
-    res.json(result.rows);
-  } catch (error) {
-    console.error("Error fetching blog posts:", error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-});
-
-// // ⭐ GET a single blog post by ID
-// app.get("/api/blog_posts/:id", async (req, res) => {
-//   const { id } = req.params;
+// app.get("/api/blog_posts", async (req, res) => {
 //   try {
-//     // ⭐ Ensure 'status' and 'image_url' are selected
 //     const result = await pool.query(
-//       `SELECT id, title, excerpt, content, image_url, category, author, publish_date, read_time, status
-//              FROM blog_posts
-//              WHERE id = $1`,
-//       [id]
+//       `SELECT
+//           id,
+//           title,
+//           excerpt,
+//           content,
+//           image,
+//           category,
+//           author,
+//           publish_date,
+//           read_time,
+//           status,
+//           $1 || COALESCE(image_url, '') AS image_url
+//        FROM blog_posts ORDER BY publish_date DESC`,
+//       [BASE_URL]
 //     );
-//     if (result.rows.length > 0) {
-//       res.status(200).json(result.rows[0]);
-//     } else {
-//       res.status(404).json({ message: "Blog post not found." });
-//     }
+//     res.json(result.rows);
 //   } catch (error) {
-//     console.error(`Error fetching blog post with ID ${id}:`, error);
-//     res
-//       .status(500)
-//       .json({ message: "Internal server error while fetching blog post." });
+//     console.error("Error fetching blog posts:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
 //   }
 // });
 
-// ⭐ GET a single blog post by ID modified BASE_ URL
-// // ⭐ GET a single blog post by ID
-app.get("/api/blog_posts", async (req, res) => {
+// // ⭐ GET a single blog post by ID image_url
+app.get("/api/blog_posts/:id", async (req, res) => {
+  const { id } = req.params;
   try {
     const result = await pool.query(
       `SELECT
@@ -790,16 +660,48 @@ app.get("/api/blog_posts", async (req, res) => {
           publish_date,
           read_time,
           status,
-          $1 || COALESCE(image_url, '') AS image_url
-       FROM blog_posts ORDER BY publish_date DESC`,
-      [BASE_URL]
+          image_url
+       FROM blog_posts WHERE id = $1`,
+      [id]
     );
-    res.json(result.rows);
+    if (result.rows.length > 0) {
+      res.json(result.rows[0]);
+    } else {
+      res.status(404).json({ message: "Blog post not found" });
+    }
   } catch (error) {
-    console.error("Error fetching blog posts:", error);
+    console.error(`Error fetching blog post with ID ${id}:`, error);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+
+// ⭐ GET a single blog post by ID modified BASE_ URL
+// // // ⭐ GET a single blog post by ID
+// app.get("/api/blog_posts", async (req, res) => {
+//   try {
+//     const result = await pool.query(
+//       `SELECT
+//           id,
+//           title,
+//           excerpt,
+//           content,
+//           image,
+//           category,
+//           author,
+//           publish_date,
+//           read_time,
+//           status,
+//           $1 || COALESCE(image_url, '') AS image_url
+//        FROM blog_posts ORDER BY publish_date DESC`,
+//       [BASE_URL]
+//     );
+//     res.json(result.rows);
+//   } catch (error) {
+//     console.error("Error fetching blog posts:", error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
 
 // POST endpoint for newsletter subscription and discount
 app.post("/api/subscribe-discount", async (req, res) => {
