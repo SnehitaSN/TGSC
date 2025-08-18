@@ -31,6 +31,11 @@ function ContactPage() {
   const [submissionError, setSubmissionError] = useState(false); // State for error message
   const [isSubmitting, setIsSubmitting] = useState(false); // State for submission status
 
+
+   // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
@@ -43,7 +48,7 @@ function ContactPage() {
     setIsSubmitting(true); // Set submitting to true
 
     try {
-      const response = await fetch('http://localhost:5000/api/contact-message', {
+      const response = await fetch(`${API_URL}/api/contact-message`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

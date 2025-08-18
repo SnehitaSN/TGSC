@@ -20,8 +20,8 @@ function ProfileEditPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-    // ⭐ ADDED: Define the backend URL from an environment variable
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+ // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -36,7 +36,7 @@ function ProfileEditPage() {
 
       try {
         // ⭐ Make authenticated API call to fetch user profile
-        const response = await fetch(`${backendUrl}/api/user/profile`, {
+        const response = await fetch(`${API_URL}/api/user/profile`, {
           headers: {
             Authorization: `Bearer ${authToken}`, // ⭐ Send JWT in Authorization header
           },

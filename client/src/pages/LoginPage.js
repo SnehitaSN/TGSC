@@ -15,8 +15,8 @@ function LoginPage() {
 
 
 
-   // ⭐ ADDED: Define the backend URL from an environment variable
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+   // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   const handleLogin = async (e) => { // Make function async
     e.preventDefault();
@@ -25,7 +25,7 @@ function LoginPage() {
     setIsSubmitting(true); // Set submitting to true
 
     try {
-      const response = await fetch(`${backendUrl}/api/login`, {
+      const response = await fetch(`${API_URL}/api/login`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

@@ -12,9 +12,8 @@ function CartPage() {
   const [loadingCart, setLoadingCart] = useState(true);
   const [cartError, setCartError] = useState(null);
 
-
-   // ⭐ ADDED: Define the backend URL from an environment variable
-  const backendUrl = process.env.REACT_APP_BACKEND_URL || 'http://localhost:5000';
+ // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   // Function to handle authentication errors (e.g., expired/invalid token)
   const handleAuthError = (errorMessage) => {
@@ -38,7 +37,7 @@ function CartPage() {
 
     try {
       // ⭐ UPDATED: Use the dynamic backend URL
-      const response = await fetch(`${backendUrl}/api/cart`, {
+      const response = await fetch(`${API_URL}/api/cart`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'application/json',

@@ -26,9 +26,8 @@ export default function GardenPlannerPage() {
   const [submissionMessage, setSubmissionMessage] = useState(null);
   const [submissionError, setSubmissionError] = useState(null);
 
-  // ⭐ ADDED: Define the dynamic backend URL
-  const backendUrl =
-    process.env.REACT_APP_BACKEND_URL || "http://localhost:5000";
+   // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   const handleInputChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -55,7 +54,7 @@ export default function GardenPlannerPage() {
 
     try {
       // ⭐ UPDATED: Use the dynamic backend URL to send form data
-      const response = await fetch(`${backendUrl}/api/garden-plan`, {
+      const response = await fetch(`${API_URL}/api/garden-plan`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
