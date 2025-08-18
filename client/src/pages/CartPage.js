@@ -13,7 +13,8 @@ function CartPage() {
   const [cartError, setCartError] = useState(null);
 
  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  // ⭐ FIX: Directly use the live backend URL
+  const API_URL = "https://tgsc.onrender.com";
 
   // Function to handle authentication errors (e.g., expired/invalid token)
   const handleAuthError = (errorMessage) => {
