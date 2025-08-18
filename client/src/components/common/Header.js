@@ -22,6 +22,11 @@ function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [cartItemCount, setCartItemCount] = useState(0);
 
+// ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+
+
   // This function is now primarily for *in-page* scrolling, if any sections on the HOME page
   // are still intended to be scrolled to from the header (e.g., if "Benefits" is part of HomePage)
   const scrollToSection = (sectionId) => {
@@ -89,7 +94,7 @@ function Header() {
     }
 
     try {
-      const response = await fetch("http://localhost:5000/api/cart", {
+      const response = await fetch(`${API_URL}/api/cart`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
           'Content-Type': 'application/json',
