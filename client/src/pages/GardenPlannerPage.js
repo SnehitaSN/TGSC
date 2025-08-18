@@ -54,7 +54,7 @@ export default function GardenPlannerPage() {
 
     try {
       // ⭐ UPDATED: Use the dynamic backend URL to send form data
-      const response = await fetch(`${API_URL}/api/garden-plan`, {
+      const response = await fetch(`${API_URL}/api/garden_plans`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

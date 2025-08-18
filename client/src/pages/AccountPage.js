@@ -191,6 +191,10 @@ function AccountPage() {
   const [loading, setLoading] = useState(true); // New loading state for data fetch
   const [error, setError] = useState(''); // New state for error messages
 
+// ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+
   useEffect(() => {
     const fetchUserProfile = async () => {
       setLoading(true);
@@ -208,7 +212,7 @@ function AccountPage() {
 
       try {
         // ⭐ Make authenticated API call to fetch user profile
-        const response = await fetch("http://localhost:5000/api/user/profile", {
+        const response = await fetch(`${API_URL}/api/user/profile`, {
           headers: {
             Authorization: `Bearer ${authToken}`, // ⭐ Send JWT in Authorization header
           },

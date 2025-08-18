@@ -799,7 +799,7 @@ app.post("/api/subscribe-discount", async (req, res) => {
 });
 
 // POST endpoint for garden plan submission
-app.post("/api/garden-plan-submission", async (req, res) => {
+app.post("/api/garden_plans", async (req, res) => {
   const {
     name,
     email,
