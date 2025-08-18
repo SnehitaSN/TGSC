@@ -108,7 +108,7 @@ pool.connect((err, client, release) => {
 // ⭐ NEW: JWT Secret from environment variables
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretjwtkey"; // Use a strong, random key in .env
 
-const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000"; // ⭐ Ensure this line exists and is correct
+const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000"; // ⭐ Ensure this line exists and is correct vercel url
 
 const BASE_URL = process.env.BASE_URL || "http://localhost:5000";
 
