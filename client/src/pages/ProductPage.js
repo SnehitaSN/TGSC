@@ -328,8 +328,11 @@ export default function ProductsPage() {
     message: "",
   }); // State for success/error messages
 
-  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
-  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  // // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  // const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+// ⭐ FIX 1: Set the API_URL to the live backend URL
+  const API_URL = "https://tgsc.onrender.com";
 
   const navigate = useNavigate();
 
@@ -389,7 +392,7 @@ export default function ProductsPage() {
     }
 
     try {
-      const response = await fetch(`${API_URL}/cart/add`, {
+      const response = await fetch(`${API_URL}/api/cart/add`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
