@@ -17,6 +17,7 @@ const port = process.env.PORT || 5000;
 const allowedOrigins = [
   "http://localhost:5000",
   "https://tgsc.onrender.com",
+   "https://www.thegoodsoilco.in", // Add your new domain here
   /https:\/\/.*\.vercel\.app$/,
 ];
 
