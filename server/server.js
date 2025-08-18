@@ -120,9 +120,15 @@ const port = process.env.PORT || 5000;
 // Use a fallback for local development if the variable isn't set
 
 const allowedOrigins = [
+  "http://localhost:5000 ",
   "https://tgsc.onrender.com", // Your Render backend URL
   /https:\/\/.*\.vercel\.app$/, // Regex to allow all subdomains of vercel.app
 ];
+
+// const allowedOrigins = [
+//   "http://localhost:5000 ",
+ 
+// ];
 
 const corsOptions = {
   origin: function (origin, callback) {
@@ -146,16 +152,29 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 
+// This SSL configuration is essential for connecting to Render's hosted PostgreSQL.
+// const pool = new Pool({
+//   user: process.env.DB_USER,
+//   host: process.env.DB_HOST,
+//   database: process.env.DB_DATABASE,
+//   password: process.env.DB_PASSWORD,
+//   port: process.env.DB_PORT,
+//   // This SSL configuration is essential for connecting to Render's hosted PostgreSQL.
+//   ssl: {
+//     rejectUnauthorized: false,
+//   },
+// });
+
+// Dynamic PostgreSQL Connection Pool Configuration
+const isProduction = process.env.NODE_ENV === "production";
+const connectionString = isProduction
+  ? process.env.DATABASE_URL
+  : `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
+
 const pool = new Pool({
-  user: process.env.DB_USER,
-  host: process.env.DB_HOST,
-  database: process.env.DB_DATABASE,
-  password: process.env.DB_PASSWORD,
-  port: process.env.DB_PORT,
-  // This SSL configuration is essential for connecting to Render's hosted PostgreSQL.
-  ssl: {
-    rejectUnauthorized: false,
-  },
+  connectionString: connectionString,
+  // Only add SSL configuration in production
+  ssl: isProduction ? { rejectUnauthorized: false } : false,
 });
 
 // Middleware
