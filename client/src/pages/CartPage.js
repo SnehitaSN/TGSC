@@ -103,7 +103,7 @@ function CartPage() {
 
     try {
          // ⭐ UPDATED: Use the dynamic backend URL
-        const response = await fetch(`${backendUrl}/api/cart/update-item`, {
+        const response = await fetch(`${API_URL}/api/cart/update-item`, {
             method: "PUT",
             headers: {
                 "Content-Type": "application/json",
@@ -147,7 +147,7 @@ function CartPage() {
 
     try {
       // ⭐ UPDATED: Use the dynamic backend URL
-        const response = await fetch(`${backendUrl}/api/cart/remove-item/${productId}`, {
+        const response = await fetch(`${API_URL}/api/cart/remove-item/${productId}`, {
             method: "DELETE",
             headers: {
                 Authorization: `Bearer ${authToken}`,

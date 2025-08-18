@@ -138,7 +138,7 @@ function CheckoutPage() {
 
       try {
         // ⭐ UPDATED: Use the dynamic backend URL
-        const response = await fetch(`${backendUrl}/api/orders/${orderId}`, {
+        const response = await fetch(`${API_URL}/api/orders/${orderId}`, {
           headers: {
             Authorization: `Bearer ${authToken}`
           }
@@ -175,7 +175,7 @@ function CheckoutPage() {
     try {
       const authToken = localStorage.getItem('authToken');
       // ⭐ UPDATED: Use the dynamic backend URL
-      const response = await fetch(`${backendUrl}/api/create-razorpay-order`, {
+      const response = await fetch(`${API_URL}/api/create-razorpay-order`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -201,7 +201,7 @@ function CheckoutPage() {
     try {
       const authToken = localStorage.getItem('authToken');
     // ⭐ UPDATED: Use the dynamic backend URL
-      const response = await fetch(`${backendUrl}/api/verify-razorpay-payment`, {
+      const response = await fetch(`${API_URL}/api/verify-razorpay-payment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

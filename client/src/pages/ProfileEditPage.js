@@ -88,7 +88,7 @@ function ProfileEditPage() {
     try {
       // ⭐ Make authenticated API call to update user profile
       const response = await fetch(
-        `${backendUrl}/api/user/profile/update`,
+        `${API_URL}/api/user/profile/update`,
         {
           method: "PUT", // Or PATCH
           headers: {
