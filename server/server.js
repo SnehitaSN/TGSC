@@ -51,10 +51,10 @@ app.use(cors(corsOptions));
 
 
 
-const isProduction = process.env.NODE_ENV === "production"; // ADDED: Defines the isProduction variable
-const connectionString = isProduction
-  ? process.env.DATABASE_URL
-  : `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
+const isProduction = process.env.NODE_ENV === "production";
+
+// ⭐ FIXED: Simplified connection to always use DATABASE_URL
+const connectionString = process.env.DATABASE_URL;
 
 const pool = new Pool({
   connectionString: connectionString,
