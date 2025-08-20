@@ -1,0 +1,17 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<title>Hand Holding Plant</title>
+<g id="hand_holding_plant">
+<path id="hand_palm" d="M16.5 28C13.5 28 9.5 26 9.5 22C9.5 18 13 18 16.5 18C20 18 22 19 22 22C22 25 19.5 28 16.5 28Z" fill="#FAD1A1"/>
+<path id="thumb" d="M14 28C13 28 12.5 26 12.5 24C12.5 22 13.5 21.5 14.5 21.5C15.5 21.5 16 22 16 24C16 26 15 28 14 28Z" fill="#FAD1A1"/>
+<path id="fingers" d="M21 21C21 19 21.5 18 22.5 18C23.5 18 24 19 24 21C24 23 23.5 24 22.5 24C21.5 24 21 23 21 21Z" fill="#FAD1A1"/>
+<path id="stem" d="M16.5 18V12" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
+<path id="soil" d="M16 20C12.5 20 10.5 21.5 10.5 23C10.5 24.5 12.5 26 16 26C19.5 26 21.5 24.5 21.5 23C21.5 21.5 19.5 20 16 20Z" fill="#795548"/>
+<path id="leaf_1" d="M14 18L12 16L14 14L16 16L14 18Z" fill="#8BC34A"/>
+<path id="leaf_2" d="M18 18L20 16L18 14L16 16L18 18Z" fill="#8BC34A"/>
+<circle id="flower_center" cx="16" cy="10" r="2" fill="#FFC107"/>
+<path id="petal_1" d="M16 8L15 6L16 5L17 6L16 8Z" fill="#F44336"/>
+<path id="petal_2" d="M16 12L15 14L16 15L17 14L16 12Z" fill="#E91E63"/>
+<path id="petal_3" d="M18 10L20 11L21 10L20 9L18 10Z" fill="#9C27B0"/>
+<path id="petal_4" d="M14 10L12 11L11 10L12 9L14 10Z" fill="#673AB7"/>
+</g>
+</svg>
