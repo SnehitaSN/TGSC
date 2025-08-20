@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Link,useLocation } from 'react-router-dom'; // Use Link from react-router-dom for navigation
+import React, { useState, useEffect } from "react";
+import { Link, useLocation } from "react-router-dom"; // Use Link from react-router-dom for navigation
 import { Leaf, Facebook, Instagram, Youtube, Twitter } from "lucide-react"; // Import social media icons
 
 function Footer() {
@@ -7,19 +7,16 @@ function Footer() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
- // Define API_URL here so it's accessible by all functions in the component
+  // Define API_URL here so it's accessible by all functions in the component
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-
-// Use the useLocation hook to track route changes
+  // Use the useLocation hook to track route changes
   const location = useLocation();
 
   // Add an effect to scroll to the top of the page on route change
   useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]); // The effect runs whenever the pathname changes
-
-
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -28,13 +25,17 @@ function Footer() {
         setError(null);
         const response = await fetch(`${API_URL}/api/products_s`); // Fetch products from your backend
         if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status} - ${response.statusText}`);
+          throw new Error(
+            `HTTP error! status: ${response.status} - ${response.statusText}`
+          );
         }
         const data = await response.json();
         setProducts(data);
       } catch (err) {
         console.error("Failed to fetch products for footer:", err);
-        setError("Failed to load product links. Please check backend server and database.");
+        setError(
+          "Failed to load product links. Please check backend server and database."
+        );
       } finally {
         setLoading(false);
       }
@@ -52,7 +53,8 @@ function Footer() {
     "Essential NPK Combo": { id: 3, name: "Essential NPK Combo" },
     "Germinator +": { id: 6, name: "Germinator+ Combo Pack" }, // Note: Backend uses "Germinator+ Combo Pack"
     "Growell": { id: 4, name: "Growell" },
-    "Flower Booster Kit": { id: 5, name: "Rose Kit" }, // Note: Backend uses "Rose Kit"
+    "Rose Kit": { id: 5, name: "Rose Kit" }, // Note: Backend uses "Rose Kit"
+    "Vegetable  Booster Kit": { id: 7, name: "Rose Kit" }, // Note: Backend uses "Rose Kit"
     "Fruit Booster Kit": { id: 8, name: "Fruit Booster Combo Pack" }, // Note: Backend uses "Fruit Booster Combo Pack"
   };
 
@@ -81,31 +83,39 @@ function Footer() {
           <h4 className="font-bold text-lg text-white mb-3">Products</h4>
           <nav className="flex flex-col space-y-2">
             {loading ? (
-              <span className="text-sm text-amber-300">Loading products...</span>
+              <span className="text-sm text-amber-300">
+                Loading products...
+              </span>
             ) : error ? (
               <span className="text-sm text-red-300">{error}</span>
             ) : (
-              Object.entries(footerProductMap).map(([footerName, { id: mappedId, name: backendName }]) => {
-                // Find the actual product object from the fetched products
-                const product = products.find(p => p.id === mappedId);
-                if (product) {
+              Object.entries(footerProductMap).map(
+                ([footerName, { id: mappedId, name: backendName }]) => {
+                  // Find the actual product object from the fetched products
+                  const product = products.find((p) => p.id === mappedId);
+                  if (product) {
+                    return (
+                      <Link
+                        key={product.id}
+                        to={`/products/${product.id}`}
+                        className="text-sm text-amber-100 hover:text-amber-50 transition-colors hover:underline underline-offset-2"
+                      >
+                        {footerName}{" "}
+                        {/* Display the name as it appears in the footer */}
+                      </Link>
+                    );
+                  }
+                  // Fallback if product not found (e.g., ID mismatch or data missing)
                   return (
-                    <Link
-                      key={product.id}
-                      to={`/products/${product.id}`}
-                      className="text-sm text-amber-100 hover:text-amber-50 transition-colors hover:underline underline-offset-2"
+                    <span
+                      key={footerName}
+                      className="text-sm text-amber-300 opacity-70 cursor-not-allowed"
                     >
-                      {footerName} {/* Display the name as it appears in the footer */}
-                    </Link>
+                      {footerName} (Not available)
+                    </span>
                   );
                 }
-                // Fallback if product not found (e.g., ID mismatch or data missing)
-                return (
-                  <span key={footerName} className="text-sm text-amber-300 opacity-70 cursor-not-allowed">
-                    {footerName} (Not available)
-                  </span>
-                );
-              })
+              )
             )}
           </nav>
         </div>
