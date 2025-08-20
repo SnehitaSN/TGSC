@@ -1,9 +1,9 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { Input } from "../components/ui/Input";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
 import { Card, CardContent } from "../components/ui/Card";
-import { Link } from "react-router-dom"; // Import Link for navigation
+import { Link, useLocation } from "react-router-dom"; // Import Link for navigation
 import { ArrowRight, Sparkles, Leaf, Sprout, Shield } from "lucide-react"; // Added Leaf, Sprout, Shield icons for the new section
 
 export default function GardenPlannerPage() {
@@ -26,7 +26,15 @@ export default function GardenPlannerPage() {
   const [submissionMessage, setSubmissionMessage] = useState(null);
   const [submissionError, setSubmissionError] = useState(null);
 
-   // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  const location = useLocation();
+
+  // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
   const handleInputChange = (e) => {
@@ -55,9 +63,9 @@ export default function GardenPlannerPage() {
     try {
       // ⭐ UPDATED: Use the dynamic backend URL to send form data
       const response = await fetch(`${API_URL}/api/garden_plans`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify(plannerFormData),
       });
@@ -321,7 +329,6 @@ export default function GardenPlannerPage() {
     </div>
   );
 }
-
 
 // import React, { useState } from 'react';
 // import { Input } from '../components/ui/Input';

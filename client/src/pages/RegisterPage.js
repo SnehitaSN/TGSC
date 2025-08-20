@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import React, { useState,useEffect } from 'react';
+import { Link, useNavigate,useLocation } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
@@ -18,6 +18,13 @@ function RegisterPage() {
 
  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+const location = useLocation();
+   // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   const handleRegister = async (e) => {
     e.preventDefault();

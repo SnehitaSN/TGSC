@@ -175,36 +175,58 @@
 // export default AccountPage;
 
 // src/pages/AccountPage.js
-import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { User, LogIn, UserPlus, Package, Loader2, XCircle, Mail, Phone, Calendar } from 'lucide-react'; // Added icons for user details
+import React, { useState, useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Button } from "../components/ui/Button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/Card";
+import {
+  User,
+  LogIn,
+  UserPlus,
+  Package,
+  Loader2,
+  XCircle,
+  Mail,
+  Phone,
+  Calendar,
+} from "lucide-react"; // Added icons for user details
 
 function AccountPage() {
   const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userName, setUserName] = useState('Guest');
-  const [userEmail, setUserEmail] = useState(''); // New state for user email
-  const [userPhone, setUserPhone] = useState(''); // New state for user phone
-  const [userCreatedAt, setUserCreatedAt] = useState(''); // New state for user creation date
+  const [userName, setUserName] = useState("Guest");
+  const [userEmail, setUserEmail] = useState(""); // New state for user email
+  const [userPhone, setUserPhone] = useState(""); // New state for user phone
+  const [userCreatedAt, setUserCreatedAt] = useState(""); // New state for user creation date
   const [loading, setLoading] = useState(true); // New loading state for data fetch
-  const [error, setError] = useState(''); // New state for error messages
+  const [error, setError] = useState(""); // New state for error messages
 
-// ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
-const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
+  const location = useLocation(); // Get the current location object
+
+  // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
       setLoading(true);
-      setError(''); // Clear previous errors
-      const authToken = localStorage.getItem('authToken'); // ⭐ Get the JWT token
+      setError(""); // Clear previous errors
+      const authToken = localStorage.getItem("authToken"); // ⭐ Get the JWT token
 
       if (!authToken) {
         setIsAuthenticated(false);
         setLoading(false);
-        setUserName('Guest');
+        setUserName("Guest");
         // Optionally, redirect to login if not authenticated and trying to access this page
         // navigate('/login');
         return;
@@ -219,38 +241,46 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
         });
 
         if (response.status === 401 || response.status === 403) {
-            // Token expired or invalid, or user not authorized
-            localStorage.removeItem('authToken'); // Clear invalid token
-            setIsAuthenticated(false);
-            setUserName('Guest');
-            setError('Your session has expired or is invalid. Please log in again.');
-            navigate('/login'); // Redirect to login
-            return;
+          // Token expired or invalid, or user not authorized
+          localStorage.removeItem("authToken"); // Clear invalid token
+          setIsAuthenticated(false);
+          setUserName("Guest");
+          setError(
+            "Your session has expired or is invalid. Please log in again."
+          );
+          navigate("/login"); // Redirect to login
+          return;
         }
 
         const data = await response.json();
 
         if (response.ok) {
           setIsAuthenticated(true);
-          setUserName(data.fullName || 'User'); // Use actual full name from backend
-          setUserEmail(data.email || ''); // Set user email
-          setUserPhone(data.phoneNumber || ''); // Set user phone
-          setUserCreatedAt(data.createdAt ? new Date(data.createdAt).toLocaleDateString() : ''); // Format date
+          setUserName(data.fullName || "User"); // Use actual full name from backend
+          setUserEmail(data.email || ""); // Set user email
+          setUserPhone(data.phoneNumber || ""); // Set user phone
+          setUserCreatedAt(
+            data.createdAt ? new Date(data.createdAt).toLocaleDateString() : ""
+          ); // Format date
         } else {
           setIsAuthenticated(false);
-          setUserName('Guest');
-          setError(data.message || 'Failed to fetch user data. Please try again.');
+          setUserName("Guest");
+          setError(
+            data.message || "Failed to fetch user data. Please try again."
+          );
           // If the error explicitly says "User not found", it means token is valid but user ID from token doesn't match a DB entry
           if (data.message === "User not found.") {
-              localStorage.removeItem('authToken'); // Clear the token as it leads to non-existent user
-              navigate('/login'); // Redirect to login
+            localStorage.removeItem("authToken"); // Clear the token as it leads to non-existent user
+            navigate("/login"); // Redirect to login
           }
         }
       } catch (err) {
-        console.error('Error fetching user profile:', err);
+        console.error("Error fetching user profile:", err);
         setIsAuthenticated(false);
-        setUserName('Guest');
-        setError('Network error or server unavailable. Please try again later.');
+        setUserName("Guest");
+        setError(
+          "Network error or server unavailable. Please try again later."
+        );
       } finally {
         setLoading(false);
       }
@@ -260,13 +290,13 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
   }, [navigate]); // Added navigate to dependency array
 
   const handleLogout = () => {
-    localStorage.removeItem('authToken'); // ⭐ Clear the actual JWT token
+    localStorage.removeItem("authToken"); // ⭐ Clear the actual JWT token
     setIsAuthenticated(false);
-    setUserName('Guest');
-    setUserEmail('');
-    setUserPhone('');
-    setUserCreatedAt('');
-    navigate('/login'); // Redirect to login page after logout
+    setUserName("Guest");
+    setUserEmail("");
+    setUserPhone("");
+    setUserCreatedAt("");
+    navigate("/login"); // Redirect to login page after logout
   };
 
   if (loading) {
@@ -286,9 +316,9 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
         </h1>
 
         {error && (
-            <div className="p-3 bg-red-100 text-red-700 rounded-md text-sm flex items-center gap-2 mb-6">
-                <XCircle className="h-5 w-5" /> {error}
-            </div>
+          <div className="p-3 bg-red-100 text-red-700 rounded-md text-sm flex items-center gap-2 mb-6">
+            <XCircle className="h-5 w-5" /> {error}
+          </div>
         )}
 
         {isAuthenticated ? (
@@ -307,26 +337,26 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
                 </div>
                 <div className="flex items-center gap-3">
                   <Phone className="h-5 w-5 text-green-700" />
-                  <span>Phone: {userPhone || 'N/A'}</span>
+                  <span>Phone: {userPhone || "N/A"}</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Calendar className="h-5 w-5 text-green-700" />
-                  <span>Member Since: {userCreatedAt || 'N/A'}</span>
+                  <span>Member Since: {userCreatedAt || "N/A"}</span>
                 </div>
 
                 <div className="pt-4 border-t border-green-200 flex flex-col gap-3">
-                    <Link to="/edit-profile">
-                        <Button className="w-full bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white">
-                            Edit Profile
-                        </Button>
-                    </Link>
-                    <Button
-                        onClick={handleLogout}
-                        variant="outline"
-                        className="w-full border-red-600 text-red-600 hover:bg-red-50"
-                    >
-                        Log Out
+                  <Link to="/edit-profile">
+                    <Button className="w-full bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white">
+                      Edit Profile
                     </Button>
+                  </Link>
+                  <Button
+                    onClick={handleLogout}
+                    variant="outline"
+                    className="w-full border-red-600 text-red-600 hover:bg-red-50"
+                  >
+                    Log Out
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -339,21 +369,31 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <p className="text-green-800 mb-4">View your past orders and their status.</p>
+                <p className="text-green-800 mb-4">
+                  View your past orders and their status.
+                </p>
                 <Link to="/orderhistory">
-                  <Button variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-50">
+                  <Button
+                    variant="outline"
+                    className="w-full border-green-600 text-green-600 hover:bg-green-50"
+                  >
                     View Order History
                   </Button>
                 </Link>
                 {/* Example of recent order (you'd fetch this from backend) */}
                 <div className="mt-6 p-4 border border-green-200 rounded-lg bg-green-50">
-                    <h4 className="font-semibold text-green-900 mb-2">Recent Order:</h4>
-                    <p className="text-sm text-green-800">Order ID: ORD12345</p>
-                    <p className="text-sm text-green-800">Date: July 20, 2025</p>
-                    <p className="text-sm text-green-800">Status: Shipped</p>
-                    <Link to="/order-details/ORD12345" className="text-green-700 hover:underline text-sm mt-2 block">
-                        View Details
-                    </Link>
+                  <h4 className="font-semibold text-green-900 mb-2">
+                    Recent Order:
+                  </h4>
+                  <p className="text-sm text-green-800">Order ID: ORD12345</p>
+                  <p className="text-sm text-green-800">Date: July 20, 2025</p>
+                  <p className="text-sm text-green-800">Status: Shipped</p>
+                  <Link
+                    to="/order-details/ORD12345"
+                    className="text-green-700 hover:underline text-sm mt-2 block"
+                  >
+                    View Details
+                  </Link>
                 </div>
               </CardContent>
             </Card>
@@ -368,7 +408,9 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <p className="text-green-800 mb-4">Already have an account? Welcome back!</p>
+                <p className="text-green-800 mb-4">
+                  Already have an account? Welcome back!
+                </p>
                 <Link to="/login">
                   <Button className="w-full bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white">
                     Log In
@@ -385,9 +427,14 @@ const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6">
-                <p className="text-green-800 mb-4">New to The Good Soil Co.? Register here.</p>
+                <p className="text-green-800 mb-4">
+                  New to The Good Soil Co.? Register here.
+                </p>
                 <Link to="/register">
-                  <Button variant="outline" className="w-full border-green-600 text-green-600 hover:bg-green-50">
+                  <Button
+                    variant="outline"
+                    className="w-full border-green-600 text-green-600 hover:bg-green-50"
+                  >
                     Register
                   </Button>
                 </Link>

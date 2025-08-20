@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom'; // Use Link from react-router-dom for navigation
+import { Link,useLocation } from 'react-router-dom'; // Use Link from react-router-dom for navigation
 import { Leaf, Facebook, Instagram, Youtube, Twitter } from "lucide-react"; // Import social media icons
 
 function Footer() {
@@ -9,6 +9,17 @@ function Footer() {
 
  // Define API_URL here so it's accessible by all functions in the component
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+
+// Use the useLocation hook to track route changes
+  const location = useLocation();
+
+  // Add an effect to scroll to the top of the page on route change
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]); // The effect runs whenever the pathname changes
+
+
 
   useEffect(() => {
     const fetchProducts = async () => {

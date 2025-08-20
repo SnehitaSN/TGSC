@@ -1,0 +1,23 @@
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<title>Vibrant Plant Favicon</title>
+<g id="vibrant_plant_scene">
+<rect width="32" height="32" fill="#FFFFFF"/>
+<path id="watering_can" d="M26 15C26 13.3431 24.6569 12 23 12H19C18.4477 12 18 12.4477 18 13V15H14V13C14 12.4477 13.5523 12 13 12H10C9.44772 12 9 12.4477 9 13V15H8C7.44772 15 7 15.4477 7 16V18C7 18.5523 7.44772 19 8 19H20C20.5523 19 21 18.5523 21 18V16C21 15.4477 20.5523 15 20 15H26ZM26 15L28 13" stroke="#2196F3" stroke-width="1.5" stroke-linecap="round"/>
+<path id="watering_can_handle" d="M22 13V10C22 9.44772 21.5523 9 21 9H18C17.4477 9 17 9.44772 17 10V11" stroke="#2196F3" stroke-width="1.5" stroke-linecap="round"/>
+<circle id="sun" cx="28" cy="4" r="3" fill="#FFC107"/>
+<path id="sun_ray_1" d="M28 7V9" stroke="#FFC107" stroke-width="1.5" stroke-linecap="round"/>
+<path id="sun_ray_2" d="M28 1V3" stroke="#FFC107" stroke-width="1.5" stroke-linecap="round"/>
+<path id="sun_ray_3" d="M25 4H23" stroke="#FFC107" stroke-width="1.5" stroke-linecap="round"/>
+<path id="sun_ray_4" d="M31 4H29" stroke="#FFC107" stroke-width="1.5" stroke-linecap="round"/>
+<path id="soil" d="M16 28C11.5817 28 8 26.2091 8 24C8 21.7909 11.5817 20 16 20C20.4183 20 24 21.7909 24 24C24 26.2091 20.4183 28 16 28Z" fill="#795548"/>
+<path id="pot" d="M22 24H10C9.44772 24 9 23.5523 9 23V21C9 20.4477 9.44772 20 10 20H22C22.5523 20 23 20.4477 23 21V23C23 23.5523 22.5523 24 22 24Z" fill="#A1887F"/>
+<path id="stem" d="M16 20V12" stroke="#4CAF50" stroke-width="2" stroke-linecap="round"/>
+<path id="leaf_1" d="M14 20L12 18L14 16L16 18L14 20Z" fill="#8BC34A"/>
+<path id="leaf_2" d="M18 20L20 18L18 16L16 18L18 20Z" fill="#8BC34A"/>
+<circle id="flower_center" cx="16" cy="10" r="2" fill="#FFC107"/>
+<path id="petal_1" d="M16 8L15 6L16 5L17 6L16 8Z" fill="#F44336"/>
+<path id="petal_2" d="M16 12L15 14L16 15L17 14L16 12Z" fill="#E91E63"/>
+<path id="petal_3" d="M18 10L20 11L21 10L20 9L18 10Z" fill="#9C27B0"/>
+<path id="petal_4" d="M14 10L12 11L11 10L12 9L14 10Z" fill="#673AB7"/>
+</g>
+</svg>

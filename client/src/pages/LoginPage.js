@@ -1,34 +1,45 @@
-import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { LogIn, Mail, Lock, Phone, CheckCircle } from 'lucide-react';
+import React, { useState,useEffect } from "react";
+import { Link, useNavigate, useLocation } from "react-router-dom";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/Card";
+import { LogIn, Mail, Lock, Phone, CheckCircle } from "lucide-react";
 
 function LoginPage() {
- const navigate = useNavigate();
-  const [loginIdentifier, setLoginIdentifier] = useState(''); // Use loginIdentifier for email/phone
-  const [password, setPassword] = useState('');
-  const [loginError, setLoginError] = useState('');
+  const navigate = useNavigate();
+  const [loginIdentifier, setLoginIdentifier] = useState(""); // Use loginIdentifier for email/phone
+  const [password, setPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
   const [loginSuccess, setLoginSuccess] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false); // New state for submission status
 
-
-
-   // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
-  const handleLogin = async (e) => { // Make function async
+  const location = useLocation();
+  // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  const handleLogin = async (e) => {
+    // Make function async
     e.preventDefault();
-    setLoginError('');
+    setLoginError("");
     setLoginSuccess(false);
     setIsSubmitting(true); // Set submitting to true
 
     try {
       const response = await fetch(`${API_URL}/api/login`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ loginIdentifier, password }),
       });
@@ -36,19 +47,21 @@ function LoginPage() {
       const data = await response.json();
 
       if (response.ok) {
-        localStorage.setItem('authToken', data.token); // ⭐ Store the JWT
+        localStorage.setItem("authToken", data.token); // ⭐ Store the JWT
         // Optionally store user data as well if needed immediately without another API call
-        localStorage.setItem('userData', JSON.stringify(data.user)); // Store basic user data
+        localStorage.setItem("userData", JSON.stringify(data.user)); // Store basic user data
         setLoginSuccess(true);
         setTimeout(() => {
-          navigate('/accountpage');
+          navigate("/accountpage");
         }, 1500);
       } else {
-        setLoginError(data.message || 'Login failed. Please check your credentials.');
+        setLoginError(
+          data.message || "Login failed. Please check your credentials."
+        );
       }
     } catch (error) {
-      console.error('Error during login:', error);
-      setLoginError('Network error. Could not connect to the server.');
+      console.error("Error during login:", error);
+      setLoginError("Network error. Could not connect to the server.");
     } finally {
       setIsSubmitting(false); // Reset submitting
     }
@@ -59,14 +72,21 @@ function LoginPage() {
       <Card className="max-w-md w-full border-green-200 shadow-xl bg-white/80 backdrop-blur-sm">
         <CardHeader className="text-center">
           <CardTitle className="text-green-950 text-3xl font-extrabold flex items-center justify-center gap-2">
-            <LogIn className="h-8 w-8" /> Log In 
+            <LogIn className="h-8 w-8" /> Log In
           </CardTitle>
-          <p className="text-green-800 mt-2">Access your personalized gardening dashboard.</p>
+          <p className="text-green-800 mt-2">
+            Access your personalized gardening dashboard.
+          </p>
         </CardHeader>
         <CardContent className="p-6">
           <form onSubmit={handleLogin} className="space-y-6">
             <div>
-              <label htmlFor="loginIdentifier" className="block text-sm font-medium text-green-900 mb-1">Email Address or Phone Number</label>
+              <label
+                htmlFor="loginIdentifier"
+                className="block text-sm font-medium text-green-900 mb-1"
+              >
+                Email Address or Phone Number
+              </label>
               <Input
                 type="text" // Type text as it can be email or phone
                 id="loginIdentifier"
@@ -75,14 +95,21 @@ function LoginPage() {
                 onChange={(e) => setLoginIdentifier(e.target.value)}
                 required
                 icon={
-                  loginIdentifier.includes('@') ?
-                  <Mail className="h-4 w-4 text-green-600" /> :
-                  <Phone className="h-4 w-4 text-green-600" />
+                  loginIdentifier.includes("@") ? (
+                    <Mail className="h-4 w-4 text-green-600" />
+                  ) : (
+                    <Phone className="h-4 w-4 text-green-600" />
+                  )
                 }
               />
             </div>
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-green-900 mb-1">Password</label>
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-green-900 mb-1"
+              >
+                Password
+              </label>
               <Input
                 type="password"
                 id="password"
@@ -102,7 +129,8 @@ function LoginPage() {
 
             {loginSuccess && (
               <div className="p-3 bg-green-100 text-green-700 rounded-md text-sm flex items-center gap-2">
-                <CheckCircle className="h-5 w-5" /> Login successful! Redirecting...
+                <CheckCircle className="h-5 w-5" /> Login successful!
+                Redirecting...
               </div>
             )}
 
@@ -115,13 +143,19 @@ function LoginPage() {
           </form>
 
           <p className="mt-6 text-center text-green-800 text-sm">
-            Don't have an account?{' '}
-            <Link to="/register" className="text-green-700 hover:underline font-semibold">
+            Don't have an account?{" "}
+            <Link
+              to="/register"
+              className="text-green-700 hover:underline font-semibold"
+            >
               Register here
             </Link>
           </p>
           <p className="mt-2 text-center text-green-800 text-sm">
-            <Link to="/forgot-password" className="text-green-700 hover:underline font-semibold">
+            <Link
+              to="/forgot-password"
+              className="text-green-700 hover:underline font-semibold"
+            >
               Forgot password?
             </Link>
           </p>

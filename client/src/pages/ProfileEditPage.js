@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import {
@@ -8,7 +8,7 @@ import {
   CardHeader,
   CardTitle,
 } from "../components/ui/Card";
-import { User, Mail, Phone, Save, ArrowLeft,CheckCircle } from "lucide-react";
+import { User, Mail, Phone, Save, ArrowLeft, CheckCircle } from "lucide-react";
 
 function ProfileEditPage() {
   const navigate = useNavigate();
@@ -20,8 +20,15 @@ function ProfileEditPage() {
   const [successMessage, setSuccessMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
- // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+  const location = useLocation();
+  // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   useEffect(() => {
     const fetchUserProfile = async () => {
@@ -87,17 +94,14 @@ function ProfileEditPage() {
 
     try {
       // ⭐ Make authenticated API call to update user profile
-      const response = await fetch(
-        `${API_URL}/api/user/profile/update`,
-        {
-          method: "PUT", // Or PATCH
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${authToken}`, // ⭐ Send JWT in Authorization header
-          },
-          body: JSON.stringify({ fullName, email, phoneNumber }),
-        }
-      );
+      const response = await fetch(`${API_URL}/api/user/profile/update`, {
+        method: "PUT", // Or PATCH
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`, // ⭐ Send JWT in Authorization header
+        },
+        body: JSON.stringify({ fullName, email, phoneNumber }),
+      });
 
       if (!response.ok) {
         const errorData = await response.json();

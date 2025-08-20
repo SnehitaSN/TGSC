@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useState,useEffect} from "react";
+import { Link,useLocation } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
 import {
@@ -32,9 +32,16 @@ function ContactPage() {
   const [isSubmitting, setIsSubmitting] = useState(false); // State for submission status
 
 
+  const location = useLocation();
+
    // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
+ // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

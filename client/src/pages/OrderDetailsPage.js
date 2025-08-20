@@ -1,10 +1,23 @@
 // src/pages/OrderDetailsPage.js
-import React, { useState, useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom'; // Added useNavigate
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Badge } from '../components/ui/Badge';
-import { Calendar, Package, MapPin, CreditCard, ArrowLeft, Loader2, XCircle } from 'lucide-react'; // Added Loader2, XCircle
+import React, { useState, useEffect } from "react";
+import { useParams, Link, useNavigate, useLocation } from "react-router-dom"; // Added useNavigate
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/Card";
+import { Button } from "../components/ui/Button";
+import { Badge } from "../components/ui/Badge";
+import {
+  Calendar,
+  Package,
+  MapPin,
+  CreditCard,
+  ArrowLeft,
+  Loader2,
+  XCircle,
+} from "lucide-react"; // Added Loader2, XCircle
 
 function OrderDetailPage() {
   const { orderId } = useParams(); // Get orderId from the URL
@@ -13,17 +26,24 @@ function OrderDetailPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
- // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+  const location = useLocation();
+  // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   useEffect(() => {
     const fetchOrderDetails = async () => {
       setLoading(true);
       setError(null);
-      const authToken = localStorage.getItem('authToken'); // Get your JWT token
+      const authToken = localStorage.getItem("authToken"); // Get your JWT token
 
       if (!authToken) {
-        navigate('/login'); // Redirect to login if not authenticated
+        navigate("/login"); // Redirect to login if not authenticated
         return;
       }
 
@@ -31,8 +51,8 @@ function OrderDetailPage() {
         // ⭐ Call your backend API to fetch order details
         const response = await fetch(`${API_URL}/api/orders/${orderId}`, {
           headers: {
-            'Authorization': `Bearer ${authToken}` // Send JWT token
-          }
+            Authorization: `Bearer ${authToken}`, // Send JWT token
+          },
         });
 
         const data = await response.json();
@@ -40,11 +60,11 @@ function OrderDetailPage() {
         if (response.ok) {
           setOrder(data);
         } else {
-          setError(data.message || 'Failed to fetch order details.');
+          setError(data.message || "Failed to fetch order details.");
         }
       } catch (err) {
-        console.error('Network error fetching order details:', err);
-        setError('Could not connect to the server. Please try again.');
+        console.error("Network error fetching order details:", err);
+        setError("Could not connect to the server. Please try again.");
       } finally {
         setLoading(false);
       }
@@ -53,7 +73,7 @@ function OrderDetailPage() {
     if (orderId) {
       fetchOrderDetails();
     } else {
-      setError('No order ID provided.');
+      setError("No order ID provided.");
       setLoading(false);
     }
   }, [orderId, navigate]); // Re-run effect if orderId changes
@@ -73,7 +93,7 @@ function OrderDetailPage() {
         <XCircle className="h-10 w-10 text-red-600" />
         <p className="ml-3 text-lg text-red-800">{error}</p>
         <Link to="/accountpage" className="ml-4">
-            <Button>Go to Account</Button>
+          <Button>Go to Account</Button>
         </Link>
       </div>
     );
@@ -84,15 +104,17 @@ function OrderDetailPage() {
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-50 to-green-100">
         <p className="text-lg text-gray-800">Order not found.</p>
         <Link to="/accountpage" className="ml-4">
-            <Button>Go to Account</Button>
+          <Button>Go to Account</Button>
         </Link>
       </div>
     );
   }
 
   // Format date for display
-  const orderDate = new Date(order.created_at).toLocaleDateString('en-US', {
-    year: 'numeric', month: 'long', day: 'numeric'
+  const orderDate = new Date(order.created_at).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
   });
 
   return (
@@ -125,16 +147,18 @@ function OrderDetailPage() {
                 <span className="font-semibold">Status:</span>
                 <Badge
                   variant={
-                    order.order_status === 'Delivered'
-                      ? 'success'
-                      : order.order_status === 'Cancelled'
-                      ? 'destructive'
-                      : 'default' // Or a specific warning variant
+                    order.order_status === "Delivered"
+                      ? "success"
+                      : order.order_status === "Cancelled"
+                      ? "destructive"
+                      : "default" // Or a specific warning variant
                   }
                   className={`capitalize ${
-                    order.order_status === 'Delivered' ? 'bg-green-500 hover:bg-green-600' :
-                    order.order_status === 'Cancelled' ? 'bg-red-500 hover:bg-red-600' :
-                    'bg-yellow-500 hover:bg-yellow-600'
+                    order.order_status === "Delivered"
+                      ? "bg-green-500 hover:bg-green-600"
+                      : order.order_status === "Cancelled"
+                      ? "bg-red-500 hover:bg-red-600"
+                      : "bg-yellow-500 hover:bg-yellow-600"
                   }`}
                 >
                   {order.order_status}
@@ -144,16 +168,18 @@ function OrderDetailPage() {
                 <span className="font-semibold">Payment Status:</span>
                 <Badge
                   variant={
-                    order.payment_status === 'Paid'
-                      ? 'success'
-                      : order.payment_status === 'Failed'
-                      ? 'destructive'
-                      : 'default'
+                    order.payment_status === "Paid"
+                      ? "success"
+                      : order.payment_status === "Failed"
+                      ? "destructive"
+                      : "default"
                   }
                   className={`capitalize ${
-                    order.payment_status === 'Paid' ? 'bg-green-500 hover:bg-green-600' :
-                    order.payment_status === 'Failed' ? 'bg-red-500 hover:bg-red-600' :
-                    'bg-yellow-500 hover:bg-yellow-600'
+                    order.payment_status === "Paid"
+                      ? "bg-green-500 hover:bg-green-600"
+                      : order.payment_status === "Failed"
+                      ? "bg-red-500 hover:bg-red-600"
+                      : "bg-yellow-500 hover:bg-yellow-600"
                   }`}
                 >
                   {order.payment_status}
@@ -161,14 +187,24 @@ function OrderDetailPage() {
               </p>
 
               <div className="pt-4 border-t border-green-200">
-                <h3 className="font-semibold text-green-900 mb-2">Order Items:</h3>
+                <h3 className="font-semibold text-green-900 mb-2">
+                  Order Items:
+                </h3>
                 <ul className="space-y-2">
-                  {order.items && order.items.map((item) => (
-                    <li key={item.id} className="flex justify-between items-center text-sm">
-                      <span>{item.product_name} (x{item.quantity})</span>
-                      <span>${(item.product_price * item.quantity).toFixed(2)}</span>
-                    </li>
-                  ))}
+                  {order.items &&
+                    order.items.map((item) => (
+                      <li
+                        key={item.id}
+                        className="flex justify-between items-center text-sm"
+                      >
+                        <span>
+                          {item.product_name} (x{item.quantity})
+                        </span>
+                        <span>
+                          ${(item.product_price * item.quantity).toFixed(2)}
+                        </span>
+                      </li>
+                    ))}
                 </ul>
               </div>
             </CardContent>
@@ -183,19 +219,26 @@ function OrderDetailPage() {
             </CardHeader>
             <CardContent className="p-6 space-y-4 text-green-800">
               <div>
-                <h3 className="font-semibold text-green-900 mb-2">Shipping Address:</h3>
+                <h3 className="font-semibold text-green-900 mb-2">
+                  Shipping Address:
+                </h3>
                 <p>{order.shipping_full_name}</p>
                 <p>{order.shipping_address}</p>
-                <p>{order.shipping_city}, {order.shipping_state} {order.shipping_zip}</p>
+                <p>
+                  {order.shipping_city}, {order.shipping_state}{" "}
+                  {order.shipping_zip}
+                </p>
                 <p>{order.shipping_country}</p>
               </div>
 
               <div className="pt-4 border-t border-green-200">
-                <h3 className="font-semibold text-green-900 mb-2">Payment Details:</h3>
+                <h3 className="font-semibold text-green-900 mb-2">
+                  Payment Details:
+                </h3>
                 <p className="text-amber-800 flex items-center gap-2">
-                    <CreditCard className="h-4 w-4 text-green-700" />
-                    {order.payment_method}
-                    {order.transaction_id && ` (ID: ${order.transaction_id})`}
+                  <CreditCard className="h-4 w-4 text-green-700" />
+                  {order.payment_method}
+                  {order.transaction_id && ` (ID: ${order.transaction_id})`}
                 </p>
               </div>
             </CardContent>
@@ -208,7 +251,11 @@ function OrderDetailPage() {
               Continue Shopping
             </Button>
           </Link>
-          <Button variant="outline" className="border-amber-700 text-amber-700 hover:bg-amber-50" onClick={() => alert("Tracking functionality coming soon!")}>
+          <Button
+            variant="outline"
+            className="border-amber-700 text-amber-700 hover:bg-amber-50"
+            onClick={() => alert("Tracking functionality coming soon!")}
+          >
             Track Order
           </Button>
         </div>

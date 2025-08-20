@@ -1,9 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Trash2, ShoppingCart, ArrowRight, Loader2, XCircle } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/Card";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import {
+  Trash2,
+  ShoppingCart,
+  ArrowRight,
+  Loader2,
+  XCircle,
+} from "lucide-react";
 
 function CartPage() {
   const navigate = useNavigate();
@@ -12,24 +23,32 @@ function CartPage() {
   const [loadingCart, setLoadingCart] = useState(true);
   const [cartError, setCartError] = useState(null);
 
- // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
+  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
   // ⭐ FIX: Directly use the live backend URL
   const API_URL = "https://tgsc.onrender.com";
 
   // Function to handle authentication errors (e.g., expired/invalid token)
   const handleAuthError = (errorMessage) => {
-    localStorage.removeItem('authToken'); // Clear the expired/invalid token
-    setCartError(errorMessage || "Your session has expired. Please log in again.");
+    localStorage.removeItem("authToken"); // Clear the expired/invalid token
+    setCartError(
+      errorMessage || "Your session has expired. Please log in again."
+    );
     setCartItems([]); // Clear cart data
     setLoadingCart(false); // Stop loading
-    navigate('/login', { state: { from: location.pathname } }); // Redirect to login
+    navigate("/login", { state: { from: location.pathname } }); // Redirect to login
   };
 
   // Function to fetch cart items from backend
   const fetchCartItems = async () => {
     setLoadingCart(true);
     setCartError(null);
-    const authToken = localStorage.getItem('authToken');
+    const authToken = localStorage.getItem("authToken");
 
     if (!authToken) {
       handleAuthError("You must be logged in to view your cart.");
@@ -41,7 +60,7 @@ function CartPage() {
       const response = await fetch(`${API_URL}/api/cart`, {
         headers: {
           Authorization: `Bearer ${authToken}`,
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
       });
 
@@ -54,16 +73,16 @@ function CartPage() {
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to fetch cart items.');
+        throw new Error(errorData.message || "Failed to fetch cart items.");
       }
 
       const data = await response.json();
-      const items = (data.items || []).map(item => ({
-          id: item.product_id,
-          name: item.name,
-          price: parseFloat(item.price),
-          quantity: item.quantity,
-          image: item.image_url
+      const items = (data.items || []).map((item) => ({
+        id: item.product_id,
+        name: item.name,
+        price: parseFloat(item.price),
+        quantity: item.quantity,
+        image: item.image_url,
       }));
       setCartItems(items);
     } catch (error) {
@@ -79,13 +98,12 @@ function CartPage() {
   useEffect(() => {
     fetchCartItems();
 
-    window.addEventListener('cartUpdated', fetchCartItems);
+    window.addEventListener("cartUpdated", fetchCartItems);
 
     return () => {
-      window.removeEventListener('cartUpdated', fetchCartItems);
+      window.removeEventListener("cartUpdated", fetchCartItems);
     };
   }, []);
-
 
   // Handle quantity change via backend API
   const handleQuantityChange = async (productId, newQuantity) => {
@@ -96,42 +114,44 @@ function CartPage() {
     setLoadingCart(true);
     setCartError(null);
 
-    const authToken = localStorage.getItem('authToken');
+    const authToken = localStorage.getItem("authToken");
     if (!authToken) {
-        handleAuthError("Authentication required to update cart.");
-        return;
+      handleAuthError("Authentication required to update cart.");
+      return;
     }
 
     try {
-         // ⭐ UPDATED: Use the dynamic backend URL
-        const response = await fetch(`${API_URL}/api/cart/update-item`, {
-            method: "PUT",
-            headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${authToken}`,
-            },
-            body: JSON.stringify({ productId, quantity }),
-        });
+      // ⭐ UPDATED: Use the dynamic backend URL
+      const response = await fetch(`${API_URL}/api/cart/update-item`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${authToken}`,
+        },
+        body: JSON.stringify({ productId, quantity }),
+      });
 
-        if (response.status === 401 || response.status === 403) {
-            // ⭐ Handle expired/invalid token specifically
-            const errorData = await response.json();
-            handleAuthError(errorData.message);
-            return;
-        }
+      if (response.status === 401 || response.status === 403) {
+        // ⭐ Handle expired/invalid token specifically
+        const errorData = await response.json();
+        handleAuthError(errorData.message);
+        return;
+      }
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to update cart item.');
-        }
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to update cart item.");
+      }
 
-        await fetchCartItems();
-        window.dispatchEvent(new Event('cartUpdated'));
+      await fetchCartItems();
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
-        console.error("Error updating cart item:", error);
-        setCartError(error.message || "Could not update cart item. Please try again.");
+      console.error("Error updating cart item:", error);
+      setCartError(
+        error.message || "Could not update cart item. Please try again."
+      );
     } finally {
-        setLoadingCart(false);
+      setLoadingCart(false);
     }
   };
 
@@ -140,45 +160,53 @@ function CartPage() {
     setLoadingCart(true);
     setCartError(null);
 
-    const authToken = localStorage.getItem('authToken');
+    const authToken = localStorage.getItem("authToken");
     if (!authToken) {
-        handleAuthError("Authentication required to remove from cart.");
-        return;
+      handleAuthError("Authentication required to remove from cart.");
+      return;
     }
 
     try {
       // ⭐ UPDATED: Use the dynamic backend URL
-        const response = await fetch(`${API_URL}/api/cart/remove-item/${productId}`, {
-            method: "DELETE",
-            headers: {
-                Authorization: `Bearer ${authToken}`,
-            },
-        });
-
-        if (response.status === 401 || response.status === 403) {
-            // ⭐ Handle expired/invalid token specifically
-            const errorData = await response.json();
-            handleAuthError(errorData.message);
-            return;
+      const response = await fetch(
+        `${API_URL}/api/cart/remove-item/${productId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${authToken}`,
+          },
         }
+      );
 
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'Failed to remove cart item.');
-        }
+      if (response.status === 401 || response.status === 403) {
+        // ⭐ Handle expired/invalid token specifically
+        const errorData = await response.json();
+        handleAuthError(errorData.message);
+        return;
+      }
 
-        await fetchCartItems();
-        window.dispatchEvent(new Event('cartUpdated'));
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Failed to remove cart item.");
+      }
+
+      await fetchCartItems();
+      window.dispatchEvent(new Event("cartUpdated"));
     } catch (error) {
-        console.error("Error removing cart item:", error);
-        setCartError(error.message || "Could not remove item from cart. Please try again.");
+      console.error("Error removing cart item:", error);
+      setCartError(
+        error.message || "Could not remove item from cart. Please try again."
+      );
     } finally {
-        setLoadingCart(false);
+      setLoadingCart(false);
     }
   };
 
   const calculateSubtotal = () => {
-    return cartItems.reduce((total, item) => total + (item.price * item.quantity), 0);
+    return cartItems.reduce(
+      (total, item) => total + item.price * item.quantity,
+      0
+    );
   };
 
   if (loadingCart) {
@@ -194,8 +222,12 @@ function CartPage() {
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-amber-50 py-12 px-4 sm:px-6 lg:px-8 font-inter">
       <div className="max-w-4xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-amber-200">
         <div className="text-center mb-10">
-          <h1 className="text-4xl font-extrabold text-green-950">Your Shopping Cart</h1>
-          <p className="text-amber-800 text-lg mt-3">Review your selected products before checkout.</p>
+          <h1 className="text-4xl font-extrabold text-green-950">
+            Your Shopping Cart
+          </h1>
+          <p className="text-amber-800 text-lg mt-3">
+            Review your selected products before checkout.
+          </p>
         </div>
 
         {cartError && (
@@ -207,10 +239,14 @@ function CartPage() {
         {cartItems.length === 0 ? (
           <Card className="text-center p-8 border-green-300 bg-white/90 shadow-md">
             <CardHeader>
-              <CardTitle className="text-amber-700 text-2xl font-bold">Your Cart is Empty</CardTitle>
+              <CardTitle className="text-amber-700 text-2xl font-bold">
+                Your Cart is Empty
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-gray-700 mb-6">Looks like you haven't added anything to your cart yet.</p>
+              <p className="text-gray-700 mb-6">
+                Looks like you haven't added anything to your cart yet.
+              </p>
               <Link to="/productpage">
                 <Button className="bg-gradient-to-r from-green-600 to-amber-800 hover:from-green-700 hover:to-amber-900 text-white">
                   Start Shopping
@@ -221,20 +257,35 @@ function CartPage() {
         ) : (
           <div className="space-y-6">
             {cartItems.map((item) => (
-              <Card key={item.id} className="flex flex-col sm:flex-row items-center p-4 border-green-100 shadow-sm bg-white/80">
+              <Card
+                key={item.id}
+                className="flex flex-col sm:flex-row items-center p-4 border-green-100 shadow-sm bg-white/80"
+              >
                 <img
-                  src={item.image || `https://placehold.co/100x100/cccccc/333333?text=${item.name.replace(/\s/g, '+')}`}
+                  src={
+                    item.image ||
+                    `https://placehold.co/100x100/cccccc/333333?text=${item.name.replace(
+                      /\s/g,
+                      "+"
+                    )}`
+                  }
                   alt={item.name}
                   className="w-24 h-24 object-cover rounded-lg mr-4 mb-4 sm:mb-0"
                 />
                 <div className="flex-grow text-center sm:text-left">
-                  <h3 className="text-xl font-bold text-green-950 mb-1">{item.name}</h3>
-                  <p className="text-amber-800 mb-2">₹{item.price.toFixed(2)}</p>
+                  <h3 className="text-xl font-bold text-green-950 mb-1">
+                    {item.name}
+                  </h3>
+                  <p className="text-amber-800 mb-2">
+                    ₹{item.price.toFixed(2)}
+                  </p>
                   <div className="flex items-center justify-center sm:justify-start gap-2">
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => handleQuantityChange(item.id, item.quantity - 1)}
+                      onClick={() =>
+                        handleQuantityChange(item.id, item.quantity - 1)
+                      }
                       disabled={item.quantity <= 1}
                       className="border-green-400 text-green-700 hover:bg-green-50"
                     >
@@ -243,7 +294,9 @@ function CartPage() {
                     <Input
                       type="number"
                       value={item.quantity}
-                      onChange={(e) => handleQuantityChange(item.id, e.target.value)}
+                      onChange={(e) =>
+                        handleQuantityChange(item.id, e.target.value)
+                      }
                       min="1"
                       max="10"
                       className="w-16 text-center border-amber-300 focus:border-green-500 focus:ring-green-500 rounded-md"
@@ -251,7 +304,9 @@ function CartPage() {
                     <Button
                       variant="outline"
                       size="icon"
-                      onClick={() => handleQuantityChange(item.id, item.quantity + 1)}
+                      onClick={() =>
+                        handleQuantityChange(item.id, item.quantity + 1)
+                      }
                       disabled={item.quantity >= 10}
                       className="border-green-400 text-green-700 hover:bg-green-50"
                     >
@@ -280,7 +335,10 @@ function CartPage() {
               </div>
               <div className="flex flex-col sm:flex-row justify-end gap-4">
                 <Link to="/productpage">
-                  <Button variant="outline" className="w-full sm:w-auto border-green-600 text-green-600 hover:bg-green-50">
+                  <Button
+                    variant="outline"
+                    className="w-full sm:w-auto border-green-600 text-green-600 hover:bg-green-50"
+                  >
                     <ShoppingCart className="mr-2 h-4 w-4" /> Continue Shopping
                   </Button>
                 </Link>

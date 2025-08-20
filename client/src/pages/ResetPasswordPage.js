@@ -1,65 +1,82 @@
 // src/pages/ResetPasswordPage.js
-import React, { useState, useEffect } from 'react';
-import { useNavigate, useSearchParams 
-    ,Link
-} from 'react-router-dom';
-import { Button } from '../components/ui/Button';
-import { Input } from '../components/ui/Input';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
-import { Lock, CheckCircle } from 'lucide-react';
+import React, { useState, useEffect } from "react";
+import {
+  useNavigate,
+  useSearchParams,
+  Link,
+  useLocation,
+} from "react-router-dom";
+import { Button } from "../components/ui/Button";
+import { Input } from "../components/ui/Input";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "../components/ui/Card";
+import { Lock, CheckCircle } from "lucide-react";
 
 function ResetPasswordPage() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams(); // Hook to get URL query params
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
-  const [message, setMessage] = useState('');
-  const [error, setError] = useState('');
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [token, setToken] = useState(null);
 
- // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+  const location = useLocation();
+
+  // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   useEffect(() => {
     // Extract token from URL query parameters (e.g., /reset-password?token=YOUR_TOKEN)
-    const resetToken = searchParams.get('token');
+    const resetToken = searchParams.get("token");
     if (resetToken) {
       setToken(resetToken);
     } else {
-      setError('Password reset token is missing or invalid.');
+      setError("Password reset token is missing or invalid.");
     }
   }, [searchParams]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setMessage('');
-    setError('');
+    setMessage("");
+    setError("");
     setIsSubmitting(true);
 
     if (!token) {
-      setError('No reset token found.');
+      setError("No reset token found.");
       setIsSubmitting(false);
       return;
     }
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match.');
+      setError("Passwords do not match.");
       setIsSubmitting(false);
       return;
     }
 
-    if (password.length < 6) { // Basic password length validation
-      setError('Password must be at least 6 characters long.');
+    if (password.length < 6) {
+      // Basic password length validation
+      setError("Password must be at least 6 characters long.");
       setIsSubmitting(false);
       return;
     }
 
     try {
       const response = await fetch(`${API_URL}/api/reset-password`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ token, newPassword: password }),
       });
@@ -67,16 +84,18 @@ function ResetPasswordPage() {
       const data = await response.json();
 
       if (response.ok) {
-        setMessage('Your password has been reset successfully! Redirecting to login...');
+        setMessage(
+          "Your password has been reset successfully! Redirecting to login..."
+        );
         setTimeout(() => {
-          navigate('/login'); // Redirect to login page after successful reset
+          navigate("/login"); // Redirect to login page after successful reset
         }, 3000);
       } else {
-        setError(data.message || 'Password reset failed. Please try again.');
+        setError(data.message || "Password reset failed. Please try again.");
       }
     } catch (err) {
-      console.error('Reset password request error:', err);
-      setError('Network error. Please try again later.');
+      console.error("Reset password request error:", err);
+      setError("Network error. Please try again later.");
     } finally {
       setIsSubmitting(false);
     }
@@ -94,7 +113,7 @@ function ResetPasswordPage() {
           <CardContent className="p-6">
             {!token && (
               <p className="text-center text-red-700 mb-4">
-                {error || 'Invalid or missing password reset link.'}
+                {error || "Invalid or missing password reset link."}
               </p>
             )}
             {token && (
@@ -141,12 +160,15 @@ function ResetPasswordPage() {
                   className="w-full bg-gradient-to-r from-green-600 to-green-800 hover:from-green-700 hover:to-green-900 text-white py-2.5 px-6 rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
                   disabled={isSubmitting}
                 >
-                  {isSubmitting ? 'Resetting...' : 'Reset Password'}
+                  {isSubmitting ? "Resetting..." : "Reset Password"}
                 </Button>
               </form>
             )}
             <p className="mt-6 text-center text-green-800 text-sm">
-              <Link to="/login" className="text-green-700 hover:underline font-semibold">
+              <Link
+                to="/login"
+                className="text-green-700 hover:underline font-semibold"
+              >
                 Back to Login
               </Link>
             </p>

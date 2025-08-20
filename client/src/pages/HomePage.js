@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate,useLocation } from "react-router-dom";
 // Corrected import paths for UI components (capitalized filenames)
 import { Button } from "../components/ui/Button";
 import { Input } from "../components/ui/Input";
@@ -189,6 +189,13 @@ export default function LandingPage() {
 
   // Define API_URL here so it's accessible by all functions in the component
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+  const location = useLocation();
+ // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   useEffect(() => {
     // Fetch products for the homepage showcase

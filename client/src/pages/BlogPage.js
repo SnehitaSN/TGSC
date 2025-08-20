@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Card, CardContent } from "../components/ui/Card";
 import { Badge } from "../components/ui/Badge";
@@ -15,6 +15,8 @@ import {
 
 // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
 const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
+
+
 
 // // ⭐ FIX: Changed process.env.VITE_API_URL to import.meta.env.VITE_API_URL
 // const API_URL = import.meta.env.REACT_APP_API_URL;
@@ -76,6 +78,15 @@ function BlogPage() {
   const [blogPosts, setBlogPosts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+
+  const location = useLocation(); // Get the current location object
+
+ // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
+
 
   useEffect(() => {
     const fetchBlogPosts = async () => {

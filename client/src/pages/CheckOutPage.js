@@ -54,9 +54,14 @@ function CheckoutPage() {
   const [loadingOrderDetails, setLoadingOrderDetails] = useState(true);
   const [orderDetailsError, setOrderDetailsError] = useState(null);
 
- // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
+  // ⭐ FIX: Using process.env.REACT_APP_API_URL, which is the convention for Create React App
   const API_URL = process.env.REACT_APP_API_URL || "http://localhost:5000";
 
+  // This useEffect hook runs whenever the URL's pathname changes.
+  // It ensures the page always scrolls to the top when navigating.
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, [location.pathname]);
 
   // Load Razorpay script dynamically
   useEffect(() => {
@@ -75,7 +80,7 @@ function CheckoutPage() {
     const fetchCartItems = async () => {
       setLoadingCart(true);
       setCartError(null);
-      const authToken = localStorage.getItem('authToken');
+      const authToken = localStorage.getItem("authToken");
 
       if (!authToken) {
         setCartError("You must be logged in to view your cart.");
@@ -88,21 +93,21 @@ function CheckoutPage() {
         const response = await fetch(`${API_URL}/api/cart`, {
           headers: {
             Authorization: `Bearer ${authToken}`,
-            'Content-Type': 'application/json',
+            "Content-Type": "application/json",
           },
         });
         if (!response.ok) {
           const errorData = await response.json();
-          throw new Error(errorData.message || 'Failed to fetch cart items.');
+          throw new Error(errorData.message || "Failed to fetch cart items.");
         }
 
         const data = await response.json();
-        const items = (data.items || []).map(item => ({
-            productId: item.product_id,
-            name: item.name,
-            price: parseFloat(item.price),
-            quantity: item.quantity,
-            image: item.image_url
+        const items = (data.items || []).map((item) => ({
+          productId: item.product_id,
+          name: item.name,
+          price: parseFloat(item.price),
+          quantity: item.quantity,
+          image: item.image_url,
         }));
 
         setOrderSummary(items);
@@ -129,10 +134,10 @@ function CheckoutPage() {
     const fetchOrderDetails = async () => {
       setLoadingOrderDetails(true);
       setOrderDetailsError(null);
-      const authToken = localStorage.getItem('authToken');
+      const authToken = localStorage.getItem("authToken");
 
       if (!authToken) {
-        navigate('/login');
+        navigate("/login");
         return;
       }
 
@@ -140,8 +145,8 @@ function CheckoutPage() {
         // ⭐ UPDATED: Use the dynamic backend URL
         const response = await fetch(`${API_URL}/api/orders/${orderId}`, {
           headers: {
-            Authorization: `Bearer ${authToken}`
-          }
+            Authorization: `Bearer ${authToken}`,
+          },
         });
 
         const data = await response.json();
@@ -149,11 +154,15 @@ function CheckoutPage() {
         if (response.ok) {
           setOrder(data);
         } else {
-          setOrderDetailsError(data.message || 'Failed to fetch order details.');
+          setOrderDetailsError(
+            data.message || "Failed to fetch order details."
+          );
         }
       } catch (err) {
-        console.error('Network error fetching order details:', err);
-        setOrderDetailsError('Could not connect to the server. Please try again.');
+        console.error("Network error fetching order details:", err);
+        setOrderDetailsError(
+          "Could not connect to the server. Please try again."
+        );
       } finally {
         setLoadingOrderDetails(false);
       }
@@ -164,7 +173,6 @@ function CheckoutPage() {
     }
   }, [orderId, navigate]);
 
-
   const handleShippingChange = (e) => {
     const { name, value } = e.target;
     setShippingInfo((prev) => ({ ...prev, [name]: value }));
@@ -173,7 +181,7 @@ function CheckoutPage() {
   // Function to create Razorpay Order on your backend
   const createRazorpayOrderOnBackend = async (amount) => {
     try {
-      const authToken = localStorage.getItem('authToken');
+      const authToken = localStorage.getItem("authToken");
       // ⭐ UPDATED: Use the dynamic backend URL
       const response = await fetch(`${API_URL}/api/create-razorpay-order`, {
         method: "POST",
@@ -181,12 +189,14 @@ function CheckoutPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${authToken}`,
         },
-        body: JSON.stringify({ amount, currency: 'INR' }),
+        body: JSON.stringify({ amount, currency: "INR" }),
       });
 
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Failed to create Razorpay order on backend.');
+        throw new Error(
+          errorData.message || "Failed to create Razorpay order on backend."
+        );
       }
       return response.json();
     } catch (error) {
@@ -199,8 +209,8 @@ function CheckoutPage() {
   // Function to verify Razorpay Payment on your backend
   const verifyRazorpayPaymentOnBackend = async (paymentResponse) => {
     try {
-      const authToken = localStorage.getItem('authToken');
-    // ⭐ UPDATED: Use the dynamic backend URL
+      const authToken = localStorage.getItem("authToken");
+      // ⭐ UPDATED: Use the dynamic backend URL
       const response = await fetch(`${API_URL}/api/verify-razorpay-payment`, {
         method: "POST",
         headers: {
@@ -211,7 +221,9 @@ function CheckoutPage() {
       });
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || 'Payment verification failed on backend.');
+        throw new Error(
+          errorData.message || "Payment verification failed on backend."
+        );
       }
       return response.json();
     } catch (error) {
@@ -235,9 +247,11 @@ function CheckoutPage() {
       setIsProcessingPayment(false);
       return; // Stop execution if key is missing
     }
-    
+
     // Display test mode message immediately
-    setTestModeMessage("Payment Gateway is in TEST MODE. No real transaction will occur.");
+    setTestModeMessage(
+      "Payment Gateway is in TEST MODE. No real transaction will occur."
+    );
     setTimeout(() => setTestModeMessage(null), 5000); // Hide after 5 seconds
 
     // Basic frontend validation before initiating payment
@@ -264,7 +278,9 @@ function CheckoutPage() {
 
     try {
       // 1. Create Order on your backend (which also interacts with Razorpay)
-      const orderCreationResponse = await createRazorpayOrderOnBackend(totalAmount);
+      const orderCreationResponse = await createRazorpayOrderOnBackend(
+        totalAmount
+      );
       const razorpayOrderId = orderCreationResponse.id; // Get Razorpay's order_id
 
       const options = {
@@ -279,19 +295,28 @@ function CheckoutPage() {
           console.log("Razorpay payment response:", response);
           // 2. Verify Payment on your backend (crucial for security)
           try {
-            const verificationResult = await verifyRazorpayPaymentOnBackend(response);
+            const verificationResult = await verifyRazorpayPaymentOnBackend(
+              response
+            );
             if (verificationResult.verified) {
-                setShowSuccessMessage(true);
-                // After successful payment and verification, navigate to order confirmation
-                setTimeout(() => {
-                    navigate(`/order-details/${verificationResult.orderId}`); // Navigate to the actual order ID
-                }, 1500);
+              setShowSuccessMessage(true);
+              // After successful payment and verification, navigate to order confirmation
+              setTimeout(() => {
+                navigate(`/order-details/${verificationResult.orderId}`); // Navigate to the actual order ID
+              }, 1500);
             } else {
-                setPaymentError("Payment verification failed. Please contact support.");
+              setPaymentError(
+                "Payment verification failed. Please contact support."
+              );
             }
           } catch (verificationError) {
-            console.error("Error during payment verification:", verificationError);
-            setPaymentError(verificationError.message || "Payment verification failed.");
+            console.error(
+              "Error during payment verification:",
+              verificationError
+            );
+            setPaymentError(
+              verificationError.message || "Payment verification failed."
+            );
           } finally {
             setIsProcessingPayment(false);
           }
@@ -312,7 +337,9 @@ function CheckoutPage() {
       const rzp1 = new window.Razorpay(options);
       rzp1.on("payment.failed", function (response) {
         console.error("Payment failed:", response.error);
-        setPaymentError(response.error.description || "Payment failed. Please try again.");
+        setPaymentError(
+          response.error.description || "Payment failed. Please try again."
+        );
         setIsProcessingPayment(false);
       });
       rzp1.open();
@@ -334,7 +361,9 @@ function CheckoutPage() {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-50 to-green-100 font-inter">
           <Loader2 className="mr-2 h-8 w-8 animate-spin text-green-700" />
-          <p className="ml-3 text-lg text-green-800">Loading order details...</p>
+          <p className="ml-3 text-lg text-green-800">
+            Loading order details...
+          </p>
         </div>
       );
     }
@@ -344,7 +373,12 @@ function CheckoutPage() {
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-50 to-green-100">
           <XCircle className="mr-2 h-8 w-8 text-red-700" />
           <p className="ml-3 text-lg text-red-800">{orderDetailsError}</p>
-          <Button onClick={() => navigate("/my-orders")} className="ml-4 bg-green-700 text-white">Back to Orders</Button>
+          <Button
+            onClick={() => navigate("/my-orders")}
+            className="ml-4 bg-green-700 text-white"
+          >
+            Back to Orders
+          </Button>
         </div>
       );
     }
@@ -352,15 +386,22 @@ function CheckoutPage() {
     if (!order) {
       return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-green-50 to-green-100">
-            <p className="text-lg text-gray-800">Order not found with this ID.</p>
-            <Button onClick={() => navigate("/my-orders")} className="ml-4 bg-green-700 text-white">Back to Orders</Button>
+          <p className="text-lg text-gray-800">Order not found with this ID.</p>
+          <Button
+            onClick={() => navigate("/my-orders")}
+            className="ml-4 bg-green-700 text-white"
+          >
+            Back to Orders
+          </Button>
         </div>
       );
     }
 
     // Format date for display
-    const orderDate = new Date(order.created_at).toLocaleDateString('en-US', {
-      year: 'numeric', month: 'long', day: 'numeric'
+    const orderDate = new Date(order.created_at).toLocaleDateString("en-US", {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
     });
 
     return (
@@ -393,16 +434,18 @@ function CheckoutPage() {
                   <span className="font-semibold">Status:</span>
                   <Badge
                     variant={
-                      order.order_status === 'Delivered'
-                        ? 'success'
-                        : order.order_status === 'Cancelled'
-                        ? 'destructive'
-                        : 'default'
+                      order.order_status === "Delivered"
+                        ? "success"
+                        : order.order_status === "Cancelled"
+                        ? "destructive"
+                        : "default"
                     }
                     className={`capitalize ${
-                      order.order_status === 'Delivered' ? 'bg-green-500 hover:bg-green-600' :
-                      order.order_status === 'Cancelled' ? 'bg-red-500 hover:bg-red-600' :
-                      'bg-yellow-500 hover:bg-yellow-600'
+                      order.order_status === "Delivered"
+                        ? "bg-green-500 hover:bg-green-600"
+                        : order.order_status === "Cancelled"
+                        ? "bg-red-500 hover:bg-red-600"
+                        : "bg-yellow-500 hover:bg-yellow-600"
                     }`}
                   >
                     {order.order_status}
@@ -412,16 +455,18 @@ function CheckoutPage() {
                   <span className="font-semibold">Payment Status:</span>
                   <Badge
                     variant={
-                      order.payment_status === 'Paid'
-                        ? 'success'
-                        : order.payment_status === 'Failed'
-                        ? 'destructive'
-                        : 'default'
+                      order.payment_status === "Paid"
+                        ? "success"
+                        : order.payment_status === "Failed"
+                        ? "destructive"
+                        : "default"
                     }
                     className={`capitalize ${
-                      order.payment_status === 'Paid' ? 'bg-green-500 hover:bg-green-600' :
-                      order.payment_status === 'Failed' ? 'bg-red-500 hover:bg-red-600' :
-                      'bg-yellow-500 hover:bg-yellow-600'
+                      order.payment_status === "Paid"
+                        ? "bg-green-500 hover:bg-green-600"
+                        : order.payment_status === "Failed"
+                        ? "bg-red-500 hover:bg-red-600"
+                        : "bg-yellow-500 hover:bg-yellow-600"
                     }`}
                   >
                     {order.payment_status}
@@ -429,14 +474,24 @@ function CheckoutPage() {
                 </p>
 
                 <div className="pt-4 border-t border-green-200">
-                  <h3 className="font-semibold text-green-900 mb-2">Order Items:</h3>
+                  <h3 className="font-semibold text-green-900 mb-2">
+                    Order Items:
+                  </h3>
                   <ul className="space-y-2">
-                    {order.items && order.items.map((item) => (
-                      <li key={item.id} className="flex justify-between items-center text-sm">
-                        <span>{item.product_name} (x{item.quantity})</span>
-                        <span>₹{(item.product_price * item.quantity).toFixed(2)}</span>
-                      </li>
-                    ))}
+                    {order.items &&
+                      order.items.map((item) => (
+                        <li
+                          key={item.id}
+                          className="flex justify-between items-center text-sm"
+                        >
+                          <span>
+                            {item.product_name} (x{item.quantity})
+                          </span>
+                          <span>
+                            ₹{(item.product_price * item.quantity).toFixed(2)}
+                          </span>
+                        </li>
+                      ))}
                   </ul>
                 </div>
               </CardContent>
@@ -451,19 +506,26 @@ function CheckoutPage() {
               </CardHeader>
               <CardContent className="p-6 space-y-4 text-green-800">
                 <div>
-                  <h3 className="font-semibold text-green-900 mb-2">Shipping Address:</h3>
+                  <h3 className="font-semibold text-green-900 mb-2">
+                    Shipping Address:
+                  </h3>
                   <p>{order.shipping_full_name}</p>
                   <p>{order.shipping_address}</p>
-                  <p>{order.shipping_city}, {order.shipping_state} {order.shipping_zip}</p>
+                  <p>
+                    {order.shipping_city}, {order.shipping_state}{" "}
+                    {order.shipping_zip}
+                  </p>
                   <p>{order.shipping_country}</p>
                 </div>
 
                 <div className="pt-4 border-t border-green-200">
-                  <h3 className="font-semibold text-green-900 mb-2">Payment Details:</h3>
+                  <h3 className="font-semibold text-green-900 mb-2">
+                    Payment Details:
+                  </h3>
                   <p className="text-green-800 flex items-center gap-2">
-                      <CreditCard className="h-4 w-4 text-green-700" />
-                      {order.payment_method}
-                      {order.transaction_id && ` (ID: ${order.transaction_id})`}
+                    <CreditCard className="h-4 w-4 text-green-700" />
+                    {order.payment_method}
+                    {order.transaction_id && ` (ID: ${order.transaction_id})`}
                   </p>
                 </div>
               </CardContent>
@@ -476,7 +538,11 @@ function CheckoutPage() {
                 Continue Shopping
               </Button>
             </Link>
-            <Button variant="outline" className="border-green-700 text-green-700 hover:bg-green-50" onClick={() => alert("Tracking functionality coming soon!")}>
+            <Button
+              variant="outline"
+              className="border-green-700 text-green-700 hover:bg-green-50"
+              onClick={() => alert("Tracking functionality coming soon!")}
+            >
               Track Order
             </Button>
           </div>
@@ -584,7 +650,8 @@ function CheckoutPage() {
                   <CardContent className="p-6">
                     <div className="text-green-800">
                       <p className="mb-4">
-                        Your payment will be processed securely via Razorpay. Click "Pay Now" to proceed.
+                        Your payment will be processed securely via Razorpay.
+                        Click "Pay Now" to proceed.
                       </p>
                     </div>
                   </CardContent>
@@ -602,7 +669,10 @@ function CheckoutPage() {
                   {orderSummary.length === 0 ? (
                     <div className="text-center text-green-700 py-8">
                       <p>Your cart is empty.</p>
-                      <Link to="/productpage" className="text-green-600 hover:underline mt-2 block">
+                      <Link
+                        to="/productpage"
+                        className="text-green-600 hover:underline mt-2 block"
+                      >
                         Start shopping!
                       </Link>
                     </div>
@@ -610,17 +680,29 @@ function CheckoutPage() {
                     <>
                       <div className="space-y-4 mb-6">
                         {orderSummary.map((item) => (
-                          <div key={item.productId} className="flex items-center gap-4">
+                          <div
+                            key={item.productId}
+                            className="flex items-center gap-4"
+                          >
                             <img
-                              src={item.image || `https://placehold.co/60x60/cccccc/333333?text=Prod`}
+                              src={
+                                item.image ||
+                                `https://placehold.co/60x60/cccccc/333333?text=Prod`
+                              }
                               alt={item.name}
                               className="w-16 h-16 object-cover rounded-md border border-green-100"
                             />
                             <div className="flex-grow">
-                              <p className="font-semibold text-green-900">{item.name}</p>
-                              <p className="text-sm text-green-700">Qty: {item.quantity}</p>
+                              <p className="font-semibold text-green-900">
+                                {item.name}
+                              </p>
+                              <p className="text-sm text-green-700">
+                                Qty: {item.quantity}
+                              </p>
                             </div>
-                            <p className="font-semibold text-green-900">₹{(item.price * item.quantity).toFixed(2)}</p>
+                            <p className="font-semibold text-green-900">
+                              ₹{(item.price * item.quantity).toFixed(2)}
+                            </p>
                           </div>
                         ))}
                       </div>
@@ -641,7 +723,8 @@ function CheckoutPage() {
                   )}
                   {showSuccessMessage && (
                     <div className="p-3 bg-green-100 text-green-700 rounded-md flex items-center gap-2 mt-4">
-                      <CheckCircle className="h-5 w-5" /> Order placed successfully! Redirecting to confirmation...
+                      <CheckCircle className="h-5 w-5" /> Order placed
+                      successfully! Redirecting to confirmation...
                     </div>
                   )}
 
@@ -658,7 +741,9 @@ function CheckoutPage() {
                     <Button
                       type="submit"
                       className="w-full sm:w-auto bg-green-700 hover:bg-green-800 text-white"
-                      disabled={isProcessingPayment || orderSummary.length === 0}
+                      disabled={
+                        isProcessingPayment || orderSummary.length === 0
+                      }
                     >
                       {isProcessingPayment ? (
                         <>
@@ -681,6 +766,3 @@ function CheckoutPage() {
 }
 
 export default CheckoutPage;
-
-
-
