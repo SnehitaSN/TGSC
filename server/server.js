@@ -17,7 +17,7 @@ const port = process.env.PORT || 5000;
 const allowedOrigins = [
   "http://localhost:5000",
   "https://tgsc.onrender.com",
-   "https://www.thegoodsoilco.in", // Add your new domain here
+  "https://www.thegoodsoilco.in", // Add your new domain here
   /https:\/\/.*\.vercel\.app$/,
 ];
 
@@ -49,8 +49,6 @@ app.use(cors(corsOptions));
 // const connectionString = isProduction
 //   ? process.env.DATABASE_URL
 //   : `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_DATABASE}`;
-
-
 
 const isProduction = process.env.NODE_ENV === "production";
 
@@ -518,33 +516,7 @@ app.get("/api/products_s", async (req, res) => {
   }
 });
 
-// Get all products from products_s modified BASE_ URL
-// app.get("/api/products_s", async (req, res) => {
-//   try {
-//     const result = await pool.query(
-//       `SELECT
-//           id,
-//           name,
-//           price,
-//           description,
-//           image,
-//           category,
-//           in_stock,
-//           coming_soon,
-//           discount_percentage,
-//           rating,
-//           $1 || COALESCE(image_url, '') AS image_url
-//        FROM products_s ORDER BY id ASC`,
-//       [BASE_URL]
-//     );
-//     res.json(result.rows);
-//   } catch (err) {
-//     console.error("Error fetching products:", err);
-//     res.status(500).json({ error: "Internal Server Error" });
-//   }
-// });
-
-// // Get a single product by ID from products_s image_url
+// // Get a single product by ID from products_s image_url modified slug
 app.get("/api/products_s/:id", async (req, res) => {
   const { id } = req.params;
   try {
@@ -574,6 +546,62 @@ app.get("/api/products_s/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+// Get all products from products_s modified BASE_ URL
+// app.get("/api/products_s", async (req, res) => {
+//   try {
+//     const result = await pool.query(
+//       `SELECT
+//           id,
+//           name,
+//           price,
+//           description,
+//           image,
+//           category,
+//           in_stock,
+//           coming_soon,
+//           discount_percentage,
+//           rating,
+//           $1 || COALESCE(image_url, '') AS image_url
+//        FROM products_s ORDER BY id ASC`,
+//       [BASE_URL]
+//     );
+//     res.json(result.rows);
+//   } catch (err) {
+//     console.error("Error fetching products:", err);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
+// // Get a single product by ID from products_s image_url
+// app.get("/api/products_s/:id", async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const result = await pool.query(
+//       `SELECT
+//           id,
+//           name,
+//           price,
+//           description,
+//           image,
+//           category,
+//           in_stock,
+//           coming_soon,
+//           discount_percentage,
+//           rating,
+//           image_url
+//        FROM products_s WHERE id = $1`,
+//       [id]
+//     );
+//     if (result.rows.length > 0) {
+//       res.json(result.rows[0]);
+//     } else {
+//       res.status(404).json({ message: "Product not found" });
+//     }
+//   } catch (err) {
+//     console.error(`Error fetching product with ID ${id}:`, err);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
 
 // Get a single product by ID from products_s modified BASE_ URL
 // app.get("/api/products_s", async (req, res) => {
@@ -682,7 +710,6 @@ app.get("/api/blog_posts/:id", async (req, res) => {
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
-
 
 // ⭐ GET a single blog post by ID modified BASE_ URL
 // // // ⭐ GET a single blog post by ID
