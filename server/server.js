@@ -15,6 +15,7 @@ const port = process.env.PORT || 5000;
 
 // ⭐ Define allowed origins using an environment variable
 const allowedOrigins = [
+  "http://localhost:3000",
   "http://localhost:5000",
   "https://tgsc.onrender.com",
   "https://www.thegoodsoilco.in", // Add your new domain here
@@ -509,43 +510,90 @@ app.get("/api/products_s", async (req, res) => {
           image_url
        FROM products_s ORDER BY id ASC`
     );
-    res.json(result.rows);
+
+    // ⭐ FIXED: Map over the results to create the full image URL
+    const productsWithFullImageUrls = result.rows.map((product) => ({
+      ...product,
+      image_url: product.image_url ? `${BASE_URL}${product.image_url}` : null,
+    }));
+
+    res.json(productsWithFullImageUrls);
+    // res.json(result.rows);
   } catch (err) {
     console.error("Error fetching products:", err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
 
-// // Get a single product by ID from products_s image_url modified slug
-app.get("/api/products_s/:id", async (req, res) => {
-  const { id } = req.params;
+
+
+// Get a single product by either ID or slug 
+app.get("/api/products_s/:identifier", async (req, res) => {
+  const { identifier } = req.params;
+  const isNumericId = /^\d+$/.test(identifier);
+
+  const queryText = `
+    SELECT
+      id, name, price, description, image, category, in_stock,
+      coming_soon, discount_percentage, rating, image_url, slug
+    FROM products_s
+    WHERE ${isNumericId ? 'id' : 'slug'} = $1
+  `;
+
   try {
-    const result = await pool.query(
-      `SELECT
-          id,
-          name,
-          price,
-          description,
-          image,
-          category,
-          in_stock,
-          coming_soon,
-          discount_percentage,
-          rating,
-          image_url
-       FROM products_s WHERE id = $1`,
-      [id]
-    );
+    const result = await pool.query(queryText, [identifier]);
+
     if (result.rows.length > 0) {
-      res.json(result.rows[0]);
+      const product = result.rows[0];
+
+      // ⭐ FIXED: Create the full image URL for the single product
+      const productWithFullImageUrl = {
+        ...product,
+        image_url: product.image_url ? `${BASE_URL}${product.image_url}` : null
+      };
+
+      res.json(productWithFullImageUrl);
     } else {
       res.status(404).json({ message: "Product not found" });
     }
   } catch (err) {
-    console.error(`Error fetching product with ID ${id}:`, err);
+    console.error(`Error fetching product with identifier ${identifier}:`, err);
     res.status(500).json({ error: "Internal Server Error" });
   }
 });
+
+// // Get a single product by ID from products_s image_url modified slug on 27sept
+// app.get("/api/products_s/:id", async (req, res) => {
+//   const { id } = req.params;
+//   try {
+//     const result = await pool.query(
+//       `SELECT
+//           id,
+//           name,
+//           price,
+//           description,
+//           image,
+//           category,
+//           in_stock,
+//           coming_soon,
+//           discount_percentage,
+//           rating,
+//           image_url
+//        FROM products_s WHERE id = $1`,
+//       [id]
+//     );
+//     if (result.rows.length > 0) {
+//       res.json(result.rows[0]);
+//     } else {
+//       res.status(404).json({ message: "Product not found" });
+//     }
+//   } catch (err) {
+//     console.error(`Error fetching product with ID ${id}:`, err);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// });
+
+
 // Get all products from products_s modified BASE_ URL
 // app.get("/api/products_s", async (req, res) => {
 //   try {
