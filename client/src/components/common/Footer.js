@@ -52,7 +52,7 @@ function Footer() {
     "Compost R": { id: 2, name: "Compost-R" }, // Note: Backend uses "Compost-R"
     "Essential NPK Combo": { id: 3, name: "Essential NPK Combo" },
     "Germinator +": { id: 6, name: "Germinator+ Combo Pack" }, // Note: Backend uses "Germinator+ Combo Pack"
-    "Growell": { id: 4, name: "Growell" },
+    Growell: { id: 4, name: "Growell" },
     "Rose Kit": { id: 5, name: "Rose Kit" }, // Note: Backend uses "Rose Kit"
     "Vegetable  Booster Kit": { id: 7, name: "Rose Kit" }, // Note: Backend uses "Rose Kit"
     "Fruit Booster Kit": { id: 8, name: "Fruit Booster Combo Pack" }, // Note: Backend uses "Fruit Booster Combo Pack"
@@ -97,7 +97,8 @@ function Footer() {
                     return (
                       <Link
                         key={product.id}
-                        to={`/products/${product.id}`}
+                        // to={`/products/${product.id}`}
+                        to={`/products/${product.slug}`}
                         className="text-sm text-amber-100 hover:text-amber-50 transition-colors hover:underline underline-offset-2"
                       >
                         {footerName}{" "}
