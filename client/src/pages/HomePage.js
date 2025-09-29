@@ -427,7 +427,7 @@ export default function LandingPage() {
                   <Badge className="bg-gradient-to-r from-green-100 to-green-200 text-green-900 hover:from-green-200 hover:to-green-300 w-fit mx-auto lg:mx-0 py-1.5 px-4 text-base shadow-sm">
                     {" "}
                     {/* Changed to green gradient */}
-                    Premium Microbial-Based Nutrition
+                    Premium Microbial Plant  Nutrition
                   </Badge>
                   <h1 className="text-4xl font-extrabold tracking-tighter sm:text-6xl xl:text-7xl/none text-green-950 leading-tight">
                     Grow Extraordinary Plants with{" "}
