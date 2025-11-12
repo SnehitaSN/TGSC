@@ -37,7 +37,7 @@ function AboutPage() {
                 {/* Left Column: Text Content */}
                 <div className="space-y-6">
                   <p>
-                    <span className="font-bold text-green-950">The Good Soil Co.</span> is a pioneering startup developing organic, microbial-powered
+                    <span className="font-bold text-red-950">The Good Soil Co.</span> is a pioneering startup developing organic, microbial-powered
                     formulas that transform home gardening. Backed by cutting-edge science, our
                     proprietary blends enhance plant resilience and enrich soil vitality, fostering
                     sustainable ecosystems in every garden to Nurture the plants, Naturally!
