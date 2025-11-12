@@ -37,7 +37,7 @@ function AboutPage() {
                 {/* Left Column: Text Content */}
                 <div className="space-y-6">
                   <p>
-                    <span className="font-bold text-green-950">The Good Soil Co.</span> is a pioneering startup developing organic, microbial-powered
+                    <span className="font-bold text-brown-950">The Good Soil Co.</span> is a pioneering startup developing organic, microbial-powered
                     formulas that transform home gardening. Backed by cutting-edge science, our
                     proprietary blends enhance plant resilience and enrich soil vitality, fostering
                     sustainable ecosystems in every garden to Nurture the plants, Naturally!
@@ -155,7 +155,7 @@ function AboutPage() {
                   <h3 className="font-bold text-lg text-green-950">100% Water Soluble</h3>
                 </div>
                 <p className="text-green-800">
-                  <span className="font-semibold">Others:</span> Often not fully water soluble or leave residue.
+                  <span className="font-semibold">Others:</span> Often not fully water soluble or leaves residue.
                 </p>
                 <p className="text-green-800">
                   <span className="font-semibold">TGSC:</span> Good carrier-based product; 100% Water Soluble.

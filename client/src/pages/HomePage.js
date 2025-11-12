@@ -427,7 +427,7 @@ export default function LandingPage() {
                   <Badge className="bg-gradient-to-r from-green-100 to-green-200 text-green-900 hover:from-green-200 hover:to-green-300 w-fit mx-auto lg:mx-0 py-1.5 px-4 text-base shadow-sm">
                     {" "}
                     {/* Changed to green gradient */}
-                    Premium Microbial Plant  Nutrition
+                    Premium Microbial Plant Nutrition
                   </Badge>
                   <h1 className="text-4xl font-extrabold tracking-tighter sm:text-6xl xl:text-7xl/none text-green-950 leading-tight">
                     Grow Extraordinary Plants with{" "}
@@ -534,7 +534,7 @@ export default function LandingPage() {
               <p className="max-w-[900px] text-green-800 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 {" "}
                 {/* Changed text color */}
-                Our premium Microbial-based fertilizers are formulated with
+                Our premium Microbial fertilizers are formulated with
                 beneficial microorganisms that create a living soil ecosystem,
                 delivering nutrients exactly when your plants need them for
                 optimal growth and vitality.
@@ -618,7 +618,7 @@ export default function LandingPage() {
               <h2 className="text-3xl font-bold tracking-tighter sm:text-5xl text-green-950">
                 {" "}
                 {/* Changed text color */}
-                Complete Plant Nutrition System for Every Gardener
+                Complete Plant Nutrition for Every Gardener
               </h2>
               <p className="max-w-[900px] text-green-800 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                 Explore our range of specialized organic fertilizers, each
