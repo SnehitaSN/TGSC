@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import { Button } from "../components/ui/Button";
 import { Badge } from "../components/ui/Badge";
-import { ArrowLeft, Calendar, User, Clock,Sparkles } from "lucide-react";
+import { ArrowLeft, Calendar, User, Clock, Sparkles } from "lucide-react";
 
 export default function SingleArticlePage() {
   const { id } = useParams(); // Get article ID from URL parameters
@@ -64,14 +64,6 @@ export default function SingleArticlePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-green-50 to-green-100 py-12 px-4 sm:px-6 lg:px-8 font-inter">
       <div className="max-w-6xl mx-auto bg-white rounded-xl shadow-lg overflow-hidden p-8 md:p-10">
-        <Link to="/blog" className="mb-6 block w-fit">
-          <Button
-            variant="outline"
-            className="border-green-400 text-green-700 hover:bg-green-50"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blog Posts
-          </Button>
-        </Link>
         <img
           // src={article.image_url || "https://placehold.co/800x400/cccccc/333333?text=Article+Image"}
           src={`${API_URL}${article.image_url}`}
@@ -117,77 +109,96 @@ export default function SingleArticlePage() {
             Splits the content by double newlines (\n\n) to create distinct blocks.
             It checks if a block is a heading, a list, or a paragraph and renders the correct semantic HTML for optimal spacing and readability.
           */}
-         {article.content.split('\n\n').map((block, index) => {
-             const trimmedBlock = block.trim();
+          {article.content.split("\n\n").map((block, index) => {
+            const trimmedBlock = block.trim();
 
-             if (trimmedBlock === '') return null; 
+            if (trimmedBlock === "") return null;
 
-             // --- HEADING DETECTION (Heuristics) ---
-             const isMainHeading = trimmedBlock.length < 70 && !trimmedBlock.startsWith('*') && !trimmedBlock.startsWith('-') && !trimmedBlock.includes(':');
-             const isSubSection = trimmedBlock.includes(':') && trimmedBlock.length < 30 && !trimmedBlock.startsWith('*');
+            // --- HEADING DETECTION (Heuristics) ---
+            const isMainHeading =
+              trimmedBlock.length < 70 &&
+              !trimmedBlock.startsWith("*") &&
+              !trimmedBlock.startsWith("-") &&
+              !trimmedBlock.includes(":");
+            const isSubSection =
+              trimmedBlock.includes(":") &&
+              trimmedBlock.length < 30 &&
+              !trimmedBlock.startsWith("*");
 
-             if (isMainHeading) {
-                 return (
-                     <h3 
-                         key={index} 
-                         className="text-xl font-semibold mt-6 mb-3 text-amber-800"
-                         style={{ whiteSpace: 'pre-wrap' }}
-                     >
-                         {trimmedBlock}
-                     </h3>
-                 );
-             }
+            if (isMainHeading) {
+              return (
+                <h3
+                  key={index}
+                  className="text-xl font-semibold mt-6 mb-3 text-amber-800"
+                  style={{ whiteSpace: "pre-wrap" }}
+                >
+                  {trimmedBlock}
+                </h3>
+              );
+            }
 
-             if (isSubSection) {
-                 return (
-                     <h4 
-                         key={index} 
-                         className="text-xl font-medium mt-4 mb-2 text-amber-800"
-                         style={{ whiteSpace: 'pre-wrap' }}
-                     >
-                         {trimmedBlock}
-                     </h4>
-                 );
-             }
+            if (isSubSection) {
+              return (
+                <h4
+                  key={index}
+                  className="text-xl font-medium mt-4 mb-2 text-amber-800"
+                  style={{ whiteSpace: "pre-wrap" }}
+                >
+                  {trimmedBlock}
+                </h4>
+              );
+            }
 
-             // --- LIST RENDERING WITH LEAF ICONS ---
-             if (trimmedBlock.startsWith('*') || trimmedBlock.includes('\n*')) {
-                 const listItems = trimmedBlock.split('\n').filter(item => item.trim() !== '');
-                 
-                 return (
-                     // Container with margin and tighter vertical spacing
-                     <div key={index} className="my-4 space-y-2 text-green-800"> 
-                         {listItems.map((item, itemIndex) => (
-                             <div key={itemIndex} className="flex items-start gap-2">
-                               {/* CHANGE: Using Sparkles, larger size, and explicit fill color */}
-                                 <Sparkles 
-                                     className="mt-2 h-4 w-4 text-green-600 fill-green-600 flex-shrink-0" 
-                                 />
-                                 <div 
-                                     className="flex-1" // Allows text to wrap nicely
-                                     style={{ whiteSpace: 'pre-wrap' }}
-                                 >
-                                     {item.replace(/^\*\s*/, '')} {/* Clean the text content */}
-                                 </div>
-                             </div>
-                         ))}
-                     </div>
-                 );
-             }
-             
+            // --- LIST RENDERING WITH LEAF ICONS ---
+            if (trimmedBlock.startsWith("*") || trimmedBlock.includes("\n*")) {
+              const listItems = trimmedBlock
+                .split("\n")
+                .filter((item) => item.trim() !== "");
 
-             // --- REGULAR PARAGRAPH ---
-             return (
-               <p 
-                 key={index} 
-                 className="mb-4"
-                 style={{ whiteSpace: 'pre-wrap' }}
-               >
-                 {trimmedBlock}
-               </p>
-             );
+              return (
+                // Container with margin and tighter vertical spacing
+                <div key={index} className="my-4 space-y-2 text-green-800">
+                  {listItems.map((item, itemIndex) => (
+                    <div key={itemIndex} className="flex items-start gap-2">
+                      {/* CHANGE: Using Sparkles, larger size, and explicit fill color */}
+                      <Sparkles className="mt-2 h-4 w-4 text-green-600 fill-green-600 flex-shrink-0" />
+                      <div
+                        className="flex-1" // Allows text to wrap nicely
+                        style={{ whiteSpace: "pre-wrap" }}
+                      >
+                        {item.replace(/^\*\s*/, "")}{" "}
+                        {/* Clean the text content */}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              );
+            }
+
+            // --- REGULAR PARAGRAPH ---
+            return (
+              <p
+                key={index}
+                className="mb-4"
+                style={{ whiteSpace: "pre-wrap" }}
+              >
+                {trimmedBlock}
+              </p>
+            );
           })}
         </div>
+      </div>
+      {/* NEW/MODIFIED PLACEMENT: Moved to end, centered, and improved styling */}
+      <div className="max-w-6xl mx-auto mt-10 flex justify-center">
+        <Link to="/blog" className="block">
+          <Button
+            variant="outline"
+            // Increased size (px-6 py-3, text-lg) for better visibility and clickability
+            className="border-green-600 text-green-700 hover:bg-green-50 px-6 py-3 text-lg transition-all"
+          >
+            <ArrowLeft className="mr-2 h-5 w-5" /> Back to All Blog Posts
+          </Button>
+        </Link>
       </div>
     </div>
   );
