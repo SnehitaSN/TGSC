@@ -246,7 +246,7 @@ export default function LandingPage() {
     };
 
     fetchBlogPosts();
-  }, []);
+  }, [API_URL]);
 
   const toggleCategory = (categoryName) => {
     setOpenCategory(openCategory === categoryName ? null : categoryName);
@@ -764,10 +764,11 @@ export default function LandingPage() {
                   >
                     <CardContent className="p-0">
                       <img
-                        src={
-                         post.image_url||
-                          "https://placehold.co/400x200/cccccc/333333?text=Blog+Image"
-                        }
+                        // src={
+                        //  post.image_url||
+                        //   "https://placehold.co/400x200/cccccc/333333?text=Blog+Image"
+                        // }
+                         src={`${API_URL}${post.image_url}`}
                         width={400}
                         height={200}
                         alt={post.title}

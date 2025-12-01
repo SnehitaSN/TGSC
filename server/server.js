@@ -22,6 +22,28 @@ const allowedOrigins = [
   /https:\/\/.*\.vercel\.app$/,
 ];
 
+// const corsOptions = {
+//   origin: function (origin, callback) {
+//     if (!origin) {
+//       return callback(null, true);
+//     }
+//     const isAllowed = allowedOrigins.some((allowedOrigin) => {
+//       if (typeof allowedOrigin === "string") {
+//         return allowedOrigin === origin;
+//       }
+//       return allowedOrigin.test(origin);
+//     });
+//     if (isAllowed) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error("Not allowed by CORS"));
+//     }
+//   },
+//   optionsSuccessStatus: 200,
+// };
+
+// app.use(cors(corsOptions));
+
 const corsOptions = {
   origin: function (origin, callback) {
     if (!origin) {
@@ -39,10 +61,13 @@ const corsOptions = {
       callback(new Error("Not allowed by CORS"));
     }
   },
-  optionsSuccessStatus: 200,
 };
 
+
+// ⭐ FIX: APPLY THE CORS MIDDLEWARE HERE (If this was missing, it caused the CORS error)
 app.use(cors(corsOptions));
+
+
 
 // ⭐ UPDATED: PostgreSQL Connection Pool Configuration
 // Uses DATABASE_URL for Render and falls back to individual variables for local
@@ -105,6 +130,10 @@ pool.connect((err, client, release) => {
   });
 });
 
+
+
+
+
 // ⭐ NEW: JWT Secret from environment variables
 const JWT_SECRET = process.env.JWT_SECRET || "supersecretjwtkey"; // Use a strong, random key in .env
 
@@ -114,7 +143,7 @@ const CLIENT_URL = process.env.CLIENT_URL || "http://localhost:3000"; // ⭐ Ens
 
 const BASE_URL = process.env.BASE_URL || "https://tgsc.onrender.com";
 
-// // Middleware to protect routes and get user ID
+// //  // //// UTILITIES & MIDDLE WARE /////////  Middleware to protect routes and get user ID
 // const authenticateToken = (req, res, next) => {
 //     const authHeader = req.headers['authorization'];
 //     const token = authHeader && authHeader.split(' ')[1];
@@ -149,6 +178,9 @@ const authenticateToken = (req, res, next) => {
     next();
   });
 };
+
+
+                              // //////////// ORDER ROUTES/////////
 
 // ⭐ Route to create a new order
 app.post("/api/orders", authenticateToken, async (req, res) => {
@@ -305,6 +337,8 @@ app.get("/api/orders/:orderId", authenticateToken, async (req, res) => {
   }
 });
 
+
+                                           // ///// CART ROUTES ////////
 // ⭐ GET User Cart Items (Protected) - Updated table name
 app.get("/api/cart", authenticateToken, async (req, res) => {
   const userId = req.user.id;
@@ -493,7 +527,8 @@ app.delete(
   }
 );
 
-// --- API Endpoints ---
+                                          //////////// --- API Endpoints ---///////////
+                                    /////////// PRODUCT ROUTES /////////
 // Get all products from products_s image_url
 app.get("/api/products_s", async (req, res) => {
   try {
@@ -704,7 +739,9 @@ app.get("/api/blog_posts", async (req, res) => {
   }
 });
 
-// ⭐ GET all blog posts modified BASE_ URL
+                                      ////////BLOG ROUTES ///////////
+
+                                    // ⭐ GET all blog posts modified BASE_ URL
 // app.get("/api/blog_posts", async (req, res) => {
 //   try {
 //     const result = await pool.query(
@@ -788,7 +825,7 @@ app.get("/api/blog_posts/:id", async (req, res) => {
 //   }
 // });
 
-// POST endpoint for newsletter subscription and discount
+                                              // POST endpoint for newsletter subscription and discount
 app.post("/api/subscribe-discount", async (req, res) => {
   const { email } = req.body;
 
@@ -875,7 +912,7 @@ app.post("/api/subscribe-discount", async (req, res) => {
   }
 });
 
-// POST endpoint for garden plan submission
+                                                     // POST endpoint for garden plan submission
 app.post("/api/garden_plans", async (req, res) => {
   const {
     name,
@@ -941,7 +978,7 @@ app.post("/api/garden_plans", async (req, res) => {
   }
 });
 
-// POST endpoint for contact form submission
+                                               // POST endpoint for contact form submission
 app.post("/api/contact-message", async (req, res) => {
   const { name, email, phone, message } = req.body; // Added phone here
 

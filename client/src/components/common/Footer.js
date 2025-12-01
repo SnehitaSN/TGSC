@@ -42,11 +42,34 @@ function Footer() {
     };
 
     fetchProducts();
-  }, []); // Fetch products once on component mount
+  }, [API_URL]); // Fetch products once on component mount
+
+  // useEffect(() => {
+  //   const fetchProducts = async () => {
+  //     try {
+  //       setLoading(true);
+  //       setError(null);
+  //       // This line uses API_URL
+  //       const response = await fetch(`${API_URL}/api/products_s`); // Fetch products from your backend
+  //       // ... rest of the try/catch block
+  //     } catch (err) {
+  //       console.error("Failed to fetch products for footer:", err);
+  //       setError(
+  //         "Failed to load product links. Please check backend server and database."
+  //       );
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   };
+
+  //   fetchProducts();
+  //   // THE FIX IS HERE: Add API_URL to the dependency array
+  // }, [API_URL]); // Fetch products once on component mount
 
   // Define a mapping from product names in the footer to actual product IDs/names from backend
   // This is necessary because the footer has hardcoded names that might not exactly match backend data.
   // In a real application, you might fetch a simplified list for the footer or use product IDs directly.
+
   const footerProductMap = {
     "Organic Gardening Kit": { id: 1, name: "Organic Gardening Kit" },
     "Compost R": { id: 2, name: "Compost-R" }, // Note: Backend uses "Compost-R"
@@ -96,9 +119,10 @@ function Footer() {
                   if (product) {
                     return (
                       <Link
-                        key={product.id}
-                        // to={`/products/${product.id}`}
-                        to={`/products/${product.slug}`}
+                        key={product.product_id}
+                         to={`/products/${product.id}`}
+                        //to={`/products/${product.slug}`}
+                        //to={`/products/${product.product_id}`}
                         className="text-sm text-amber-100 hover:text-amber-50 transition-colors hover:underline underline-offset-2"
                       >
                         {footerName}{" "}

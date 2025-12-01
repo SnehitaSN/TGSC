@@ -1,11 +1,11 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/Button';
-import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/Card';
+import { Card, CardContent} from '../components/ui/Card';
 import { Badge } from '../components/ui/Badge';
 import {
-  Leaf, Sprout, FlaskConical, Award, Factory, Users, Target, Eye, Heart,ArrowRight, // Icons for About Us
-  CheckCircle, Diamond, Clock, Gem, Scale, Droplets // More specific icons for differentiators
+  Leaf, Sprout, Users, Target, Eye, Heart,ArrowRight, // Icons for About Us
+  CheckCircle, Diamond, Clock,  Scale, Droplets // More specific icons for differentiators
 } from 'lucide-react';
 
 // Import the image
@@ -37,12 +37,12 @@ function AboutPage() {
                 {/* Left Column: Text Content */}
                 <div className="space-y-6">
                   <p>
-                    <span className="font-bold text-red-950">The Good Soil Co.</span> is a pioneering startup developing organic, microbial-powered
+                    <span className="font-bold text-amber-800">The Good Soil Co.</span> is a pioneering startup developing organic, microbial-powered
                     formulas that transform home gardening. Backed by cutting-edge science, our
                     proprietary blends enhance plant resilience and enrich soil vitality, fostering
                     sustainable ecosystems in every garden to Nurture the plants, Naturally!
                   </p>
-                  <p className="font-semibold text-green-950">
+                  <p className="font-semibold text-amber-800">
                     Backed by Microbax (India) Ltd, a leading
                     biotechnology company producing probiotics and other beneficial micro-organisms
                     since 1998.
